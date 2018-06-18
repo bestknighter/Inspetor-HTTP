@@ -7,17 +7,17 @@ A tela inicial deve ser o Interceptor mas também deve contar com um botão para
 
 O executável será chamado de aracne e usará as bibliotecas POSIX C.
 
----
+## Submódulos
 
-## Interceptor
+### Interceptor
 
 Permite interceptar e editar requests HTTP dos navegador antes de permitir que sigam para seu destino final.
 
-## Spider
+### Spider
 
 O spider cria recursivamente uma árvore hipertextual das URLs adjacentes à uma URL fornecida.
 URLs fora do domínio raiz não devem ser perseguidas.
 
-## Client
+### Client
 
 Comportamento similar ao wget porém somente para HTTP. Deve corrigir as referências para que o site possa ser usado localmente.

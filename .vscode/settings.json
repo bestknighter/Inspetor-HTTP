@@ -1,0 +1,11 @@
+{
+	"files.associations": {
+		"xlocale": "cpp",
+		"xstring": "cpp",
+		"xmemory0": "cpp",
+		"iosfwd": "cpp",
+		"initializer_list": "cpp",
+		"type_traits": "cpp",
+		"xutility": "cpp"
+	}
+}
