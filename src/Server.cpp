@@ -14,19 +14,23 @@ Server::Server( int port ) : port( port ), socket( -1 ), state( 0 ) {
 			printf( "\nFailed to bind socket.\n" );
 		} else {
 			state |= SOCKET_BINDED;
+			FD_ZERO( &active_fd_set );
+			FD_SET( socket, &active_fd_set );
 		}
 	}
 }
 
 Server::~Server() {
 	state = SHUTTING_DOWN;
-	while( state != 0 ) {}
 	for( int i = connections.size() - 1; i >= 0; i-- ) {
 		close( connections[i].socket );
+		FD_CLR( connections[i].socket, &active_fd_set );
 	}
 	if( socket >= 0 ) {
 		close( socket );
+		FD_CLR( socket, &active_fd_set );
 	}
+	state = 0;
 }
 
 bool Server::Start( int queueSize ) {
@@ -36,37 +40,43 @@ bool Server::Start( int queueSize ) {
 
 void Server::Run() {
 	state |= SERVER_RUNNING;
-	while( state & SERVER_RUNNING ) {
 
-		// Accepting connections
-		ConnectionData cd;
-		socklen_t length;
-		cd.socket = accept( socket, (struct sockaddr*) &(cd.address), &length );
-		if( -1 < cd.socket ) {
-			if( sizeof(struct sockaddr_in) != length ) {
-				printf( "\nUnexpected socket address type encountered.\n" );
-				close( cd.socket );
-			} else {
-				if( state & SERVER_RUNNING ) {
+	read_fd_set = active_fd_set;
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 250;
+	if( select( FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout ) < 0 ) {
+		printf( "\nCould not wait on select for sockets.\n" );
+	}
+	for( int i = 0; i < FD_SETSIZE; i++ ) {
+		if( FD_ISSET(i, &read_fd_set ) ) {
+			if( i == socket ) {
+				// Accepting connections
+				ConnectionData cd;
+				socklen_t length = sizeof(struct sockaddr_in);
+				cd.socket = accept( socket, (struct sockaddr*) &(cd.address), &length );
+				if( -1 < cd.socket ) {
 					connections.push_back( cd );
-				} else {
-					close( cd.socket );
+					FD_SET( cd.socket, &active_fd_set );
+				}
+			} else {
+				// Receiving data
+				int connectionID;
+				for( connectionID = 0; connectionID < connections.size(); connectionID++ ) {
+					if( connections[connectionID].socket == i ) break;
+				}
+				char buffer[1024];
+				int valread = read( i, buffer, 1024 );
+				if( 0 < valread) {
+					messagesReceived.emplace_back( std::string( buffer, valread ), connectionID );
+				} else if( 0 == valread ) {
+					close( i );
+					FD_CLR( i, &active_fd_set );
+					connections.erase( connections.begin() + connectionID );
 				}
 			}
 		}
-
-		// Receiving data
-		char buffer[1024];
-		for( int connectionID = connections.size(); connectionID >= 0; connectionID-- ) {
-			int valread = read( connections[connectionID].socket, buffer, 1024 );
-			if( 0 < valread) {
-				messagedReceived.emplace_back( std::string( buffer, valread ), connectionID );
-			} else if( 0 == valread ) {
-				close( connections[connectionID].socket );
-				connections.erase( connections.begin() + connectionID );
-			}
-		}
 	}
+
 }
 
 bool Server::IsValid() {

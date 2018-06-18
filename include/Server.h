@@ -1,5 +1,7 @@
 #include <cstdio>
 #include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/select.h>
 #include <cstdlib>
 #include <netinet/in.h>
 #include <string>
@@ -31,6 +33,9 @@ private:
 	int socket;
 	short state;
 	std::vector< ConnectionData > connections;
+	fd_set active_fd_set;
+	fd_set read_fd_set;
+	struct timeval timeout;
 	
 	struct sockaddr_in address;
 
