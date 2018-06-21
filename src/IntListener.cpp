@@ -11,27 +11,27 @@ IntListener::IntListener( int port ) : port( port ), socket( -1 ), state( 0 ) {
 	if( (socket = socket( AF_INET, SOCK_STREAM, 0 )) < 0 ) {
 		printf( "\nSocket creation error\n" );
 	} else {
-		state |= SOCKET_CREATED;
+		state |= intListenerState::SOCKET_CREATED;
 		address.sin_family = AF_INET;
 		address.sin_addr.s_addr = INADDR_LOOPBACK;
 		address.sin_port = htons( port );
 		if( bind( socket, (struct sockaddr *) &address, sizeof(address) ) < 0 ) {
 			printf( "\nFailed to bind socket.\n" );
 		} else {
-			state |= SOCKET_BINDED;
+			state |= intListenerState::SOCKET_BINDED;
 			FD_ZERO( &active_fd_set );
 			FD_SET( socket, &active_fd_set );
 			if( listen( socket, QUEUESIZE ) < 0 ) {
 				printf( "\nFailed to start listening.\n" );
 			} else {
-				state |= INTLISTENER_STARTED;
+				state |= intListenerState::INTLISTENER_STARTED;
 			}
 		}
 	}
 }
 
 IntListener::~IntListener() {
-	state = SHUTTING_DOWN;
+	state = intListenerState::SHUTTING_DOWN;
 	for( int i = connections.size() - 1; i >= 0; i-- ) {
 		close( connections[i].socket );
 		FD_CLR( connections[i].socket, &active_fd_set );
@@ -44,7 +44,7 @@ IntListener::~IntListener() {
 }
 
 void IntListener::AcceptAndReceive() {
-	state |= INTLISTENER_RUNNING;
+	state |= intListenerState::INTLISTENER_RUNNING;
 
 	read_fd_set = active_fd_set;
 	timeout.tv_sec = 0;
@@ -91,7 +91,7 @@ void IntListener::AcceptAndReceive() {
 }
 
 ssize_t IntListener::Send( int connectionID, std::string message ) {
-	if( state & INTLISTENER_RUNNING ) {
+	if( state & intListenerState::INTLISTENER_RUNNING ) {
 		if( connectionID < connections.size() ) {
 			return send( connections[connectionID].socket , message.c_str(), message.length(), 0 );
 		} else {
