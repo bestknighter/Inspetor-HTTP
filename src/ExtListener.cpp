@@ -2,11 +2,14 @@
 
 #include <cstdio>
 
+#include "ErrorPrinter.h"
+
 #define EXTLISTENER_TIMEOUT_MS 25
 
 namespace Socket {
 
 ExtListener::ExtListener() {
+    errno = 0;
 	FD_ZERO( &active_fd_set );
 }
 

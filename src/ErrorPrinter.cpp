@@ -35,7 +35,9 @@ int socketError() {
 			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
 			break;
 	}
-	return errno;
+	int ret = errno;
+	errno = 0;
+	return ret;
 }
 
 int bindError() {
@@ -80,7 +82,9 @@ int bindError() {
 			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
 			break;
 	}
-	return errno;
+	int ret = errno;
+	errno = 0;
+	return ret;
 }
 
 int listenError() {
@@ -116,7 +120,9 @@ int listenError() {
 			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
 			break;
 	}
-	return errno;
+	int ret = errno;
+	errno = 0;
+	return ret;
 }
 
 int connectError() {
@@ -203,7 +209,9 @@ int connectError() {
 			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
 			break;
 	}
-	return errno;
+	int ret = errno;
+	errno = 0;
+	return ret;
 }
 
 int selectError() {
@@ -226,15 +234,16 @@ int selectError() {
 			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
 			break;
 	}
-	return errno;
+	int ret = errno;
+	errno = 0;
+	return ret;
 }
 
 int acceptError() {
 	switch( errno ) {
 		/* Linux error codes */
-		case EAGAIN:
 		case EWOULDBLOCK:
-			printf( "\nEAGAIN | EWOULDBLOCK: The socket is marked nonblocking and no connections are present to be accepted.\n" );
+			printf( "\nEWOULDBLOCK: The socket is marked nonblocking and no connections are present to be accepted.\n" );
 			break;
 		case EBADF:
 			printf( "\nEBADF: sockfd is not an open file descriptor.\n" );
@@ -278,15 +287,16 @@ int acceptError() {
 			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
 			break;
 	}
-	return errno;
+	int ret = errno;
+	errno = 0;
+	return ret;
 }
 
 int readError() {
 	switch( errno ) {
 		/* Linux error codes */
-		case EAGAIN:
 		case EWOULDBLOCK:
-			printf( "\nEAGAIN | EWOULDBLOCK: The file descriptor fd refers to a file other than a socket and has been marked nonblocking (O_NONBLOCK), and the read would block.\n" );
+			printf( "\nEWOULDBLOCK: The file descriptor fd refers to a file other than a socket and has been marked nonblocking (O_NONBLOCK), and the read would block.\n" );
 			break;
 		case EBADF:
 			printf( "\nEBADF: fd is not a valid file descriptor or is not open for reading.\n" );
@@ -336,7 +346,9 @@ int readError() {
 			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
 			break;
 	}
-	return errno;
+	int ret = errno;
+	errno = 0;
+	return ret;
 }
 
 int sendError() {
@@ -347,9 +359,6 @@ int sendError() {
 			break;
 		case EAGAIN:
 			printf( "\nEAGAIN: The socket is marked nonblocking and the requested operation would block; Or, (Internet domain datagram sockets) The socket referred to by sockfd had not previously been bound to an address and, upon attempting to bind it to an ephemeral port, it was determined that all port numbers in the ephemeral port range are currently in use.\n" );
-			break;
-		case EWOULDBLOCK:
-			printf( "\nEWOULDBLOCK: The socket is marked nonblocking and the requested operation would block.\n" );
 			break;
 		case EALREADY:
 			printf( "\nEALREADY: Another Fast Open is in progress.\n" );
@@ -411,7 +420,9 @@ int sendError() {
 			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
 			break;
 	}
-	return errno;
+	int ret = errno;
+	errno = 0;
+	return ret;
 }
 
 int closeError() {
@@ -434,7 +445,9 @@ int closeError() {
 			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
 			break;
 	}
-	return errno;
+	int ret = errno;
+	errno = 0;
+	return ret;
 }
 
 };
