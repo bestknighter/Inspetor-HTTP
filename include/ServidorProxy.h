@@ -13,8 +13,8 @@ public:
 	~ServidorProxy();
 	bool Loop();
 private:
-	ExtListener el;
-	IntListener il;
+	Socket::IntListener il;
+	Socket::ExtListener el;
 };
 
 #endif // SERVIDORPROXY_H
