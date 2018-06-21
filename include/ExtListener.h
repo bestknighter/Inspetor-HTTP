@@ -1,3 +1,6 @@
+#ifndef EXTLISTENER_H
+#define EXTLISTENER_H
+
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/select.h>
@@ -38,3 +41,5 @@ private:
 };
 
 };
+
+#endif // EXTLISTENER_H

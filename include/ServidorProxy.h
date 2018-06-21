@@ -1,3 +1,6 @@
+#ifndef SERVIDORPROXY_H
+#define SERVIDORPROXY_H
+
 #include <cstdio>
 #include <cstdlib>
 
@@ -13,3 +16,5 @@ private:
 	ExtListener el;
 	IntListener il;
 };
+
+#endif // SERVIDORPROXY_H

@@ -1,3 +1,6 @@
+#ifndef MESSAGEDATA_H
+#define MESSAGEDATA_H
+
 #include <string>
 
 namespace Socket {
@@ -14,3 +17,5 @@ typedef struct {
 } MessageData;
 
 };
+
+#endif // MESSAGEDATA_H
