@@ -67,7 +67,7 @@ void IntListener::AcceptAndReceive() {
 			} else {
 				// Receiving data
 				int connectionID;
-				for( connectionID = 0; connectionID < connections.size(); connectionID++ ) {
+				for( connectionID = 0; connectionID < (int) connections.size(); connectionID++ ) {
 					if( connections[connectionID].socket == i ) break;
 				}
 				char buffer[1024];
@@ -93,7 +93,7 @@ void IntListener::AcceptAndReceive() {
 
 ssize_t IntListener::Send( int connectionID, std::string message ) {
 	if( state & intListenerState::INTLISTENER_RUNNING ) {
-		if( connectionID < connections.size() ) {
+		if( connectionID < (int) connections.size() ) {
 			return send( connections[connectionID].socket , message.c_str(), message.length(), 0 );
 		} else {
 			printf( "\nInvalid connectionID.\n" );

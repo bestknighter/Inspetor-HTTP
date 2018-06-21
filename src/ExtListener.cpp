@@ -58,7 +58,7 @@ void ExtListener::ReceiveMessages() {
 		if( FD_ISSET(i, &read_fd_set ) ) {
 			// Receiving data
 			int connectionID;
-			for( connectionID = 0; connectionID < connections.size(); connectionID++ ) {
+			for( connectionID = 0; connectionID < (int) connections.size(); connectionID++ ) {
 				if( connections[connectionID].socket == i ) break;
 			}
 			char buffer[1024];

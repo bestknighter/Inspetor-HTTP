@@ -7,8 +7,8 @@ ServidorProxy::~ServidorProxy() {}
 bool ServidorProxy::Loop() {
 	// Leaving machine first
 	il.AcceptAndReceive();
-	printf( "\nThere are %d outbound packets.\n", il.messagesReceived.size() );
-	for( int i = 0; i < il.messagesReceived.size(); i++ ) {
+	printf( "\nThere are %d outbound packets.\n", (int) il.messagesReceived.size() );
+	for( int i = 0; i < (int) il.messagesReceived.size(); i++ ) {
 		printf( "\nMessage from %s:%d to %s:%d\n%s\n"
 			, il.messagesReceived[i].addr_from.c_str()
 			, il.messagesReceived[i].port_from
@@ -21,8 +21,8 @@ bool ServidorProxy::Loop() {
 
 	// Arriving machine last
 	el.ReceiveMessages();
-	printf( "\nThere are %d inbound packets.\n", el.messagesReceived.size() );
-	for( int i = 0; i < el.messagesReceived.size(); i++ ) {
+	printf( "\nThere are %d inbound packets.\n", (int) el.messagesReceived.size() );
+	for( int i = 0; i < (int) el.messagesReceived.size(); i++ ) {
 		printf( "\nMessage from %s:%d to %s:%d\n%s\n"
 			, il.messagesReceived[i].addr_from.c_str()
 			, il.messagesReceived[i].port_from
