@@ -64,7 +64,14 @@ void ExtListener::ReceiveMessages() {
 			char buffer[1024];
 			int valread = read( i, buffer, 1024 );
 			if( 0 < valread) {
-				messagesReceived.emplace_back( std::string( buffer, valread ), connections[connectionID].connectionIDofInternal );
+				MessageData md;
+				md.message = std::string( buffer, valread );
+				md.connectionIDofInternal = connections[connectionID].connectionIDofInternal;
+				md.addr_from = connections[connectionID].addr ) );
+				md.port_from = connections[connectionID].port;
+				md.addr_to = "127.0.0.1";
+				md.port_to = port;
+				messagesReceived.push_back( md );
 			} else if( 0 == valread ) {
 				close( i );
 				FD_CLR( i, &active_fd_set );

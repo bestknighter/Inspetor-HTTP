@@ -72,7 +72,14 @@ void IntListener::AcceptAndReceive() {
 				char buffer[1024];
 				int valread = read( i, buffer, 1024 );
 				if( 0 < valread) {
-					messagesReceived.emplace_back( std::string( buffer, valread ), connectionID );
+					MessageData md;
+					md.message = std::string( buffer, valread );
+					md.connectionIDofInternal = connectionID;
+					md.addr_from = std::string( inet_ntoa( connections[connectionID].address.sin_addr ) );
+					md.port_from = connections[connectionID].address.sin_port;
+					md.addr_to = "127.0.0.1";
+					md.port_to = port;
+					messagesReceived.push_back( md );
 				} else if( 0 == valread ) {
 					close( i );
 					FD_CLR( i, &active_fd_set );

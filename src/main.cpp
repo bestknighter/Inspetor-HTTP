@@ -3,9 +3,6 @@
 #include <string>
 #include <stdexcept>
 
-#include "ExtListener.h"
-#include "IntListener.h"
-
 #define DEFAULT_PORT 8228
 
 int main( int argc, char* argv[] ) {
