@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <string>
 #include <vector>
+#include <unistd.h>
 
 #include "MessageData.h"
 
