@@ -21,7 +21,7 @@ IntListener::IntListener( int port ) : port( port ), socket( -1 ), state( 0 ) {
 			state |= SOCKET_BINDED;
 			FD_ZERO( &active_fd_set );
 			FD_SET( socket, &active_fd_set );
-			if( listen( socket, queueSize ) < 0 ) {
+			if( listen( socket, QUEUESIZE ) < 0 ) {
 				printf( "\nFailed to start listening.\n" );
 			} else {
 				state |= INTLISTENER_STARTED;
