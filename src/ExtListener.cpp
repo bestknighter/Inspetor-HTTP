@@ -12,7 +12,9 @@ ExtListener::ExtListener() {
 
 ExtListener::~ExtListener() {
 	for( int i = connections.size() - 1; i >= 0; i-- ) {
-		close( connections[i].socket );
+		if( close( connections[i].socket ) < 0 ) {
+			closeError();
+		}
 		FD_CLR( connections[i].socket, &active_fd_set );
 	}
 }
@@ -26,6 +28,7 @@ ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int por
 
 	if( (si.socket = socket( AF_INET, SOCK_STREAM, 0 )) < 0 ) {
 		printf( "\nSocket creation error\n" );
+		socketError();
 	} else {
 		memset( &(si.serv_addr), '0', sizeof( si.serv_addr ) );
 
@@ -37,13 +40,20 @@ ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int por
 			printf( "\nInvalid address / Address not supported.\n" );
 		} else if( connect( si.socket, (struct sockaddr *) &(si.serv_addr), sizeof(si.serv_addr) ) < 0 ) {
 			printf( "\nConnection Failed\n" );
+			connectError();
 		} else {
 			connections.push_back( si );
 			FD_SET( si.socket, &active_fd_set );
-			return send( si.socket, message.c_str(), message.length(), 0 );
+			ssize_t sent = send( si.socket, message.c_str(), message.length(), 0 );
+			if( sent < -1 ) {
+				printf( "\nCould not send data.\n" );
+				sendError();
+			} else {
+				return sent;
+			}
 		}
 	}
-	return 0;
+	return -1;
 }
 
 void ExtListener::ReceiveMessages() {
@@ -53,6 +63,7 @@ void ExtListener::ReceiveMessages() {
 
 	if( select( FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout ) < 0 ) {
 		printf( "\nCould not wait on select for sockets.\n" );
+		selectError();
 	}
 	for( int i = 0; i < FD_SETSIZE; i++ ) {
 		if( FD_ISSET(i, &read_fd_set ) ) {
@@ -73,9 +84,14 @@ void ExtListener::ReceiveMessages() {
 				md.port_to = 8228;
 				messagesReceived.push_back( md );
 			} else if( 0 == valread ) {
-				close( i );
+				if( close( i ) < 0 ) {
+					closeError();
+				}
 				FD_CLR( i, &active_fd_set );
 				connections.erase( connections.begin() + connectionID );
+			} else {
+				printf( "\nCould not read data.\n" );
+				readError();
 			}
 		}
 	}
