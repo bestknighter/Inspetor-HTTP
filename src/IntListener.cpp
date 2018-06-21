@@ -7,21 +7,22 @@
 
 namespace Socket {
 
-IntListener::IntListener( int port ) : port( port ), socket( -1 ), state( 0 ) {
-	if( (socket = socket( AF_INET, SOCK_STREAM, 0 )) < 0 ) {
+IntListener::IntListener( int port ) : port( port ), socketfd( -1 ), state( 0 ) {
+	socketfd = socket( AF_INET, SOCK_STREAM, 0 );
+	if( socketfd < 0 ) {
 		printf( "\nSocket creation error\n" );
 	} else {
 		state |= intListenerState::SOCKET_CREATED;
 		address.sin_family = AF_INET;
 		address.sin_addr.s_addr = INADDR_LOOPBACK;
 		address.sin_port = htons( port );
-		if( bind( socket, (struct sockaddr *) &address, sizeof(address) ) < 0 ) {
+		if( bind( socketfd, (struct sockaddr *) &address, sizeof(address) ) < 0 ) {
 			printf( "\nFailed to bind socket.\n" );
 		} else {
 			state |= intListenerState::SOCKET_BINDED;
 			FD_ZERO( &active_fd_set );
-			FD_SET( socket, &active_fd_set );
-			if( listen( socket, QUEUESIZE ) < 0 ) {
+			FD_SET( socketfd, &active_fd_set );
+			if( listen( socketfd, QUEUESIZE ) < 0 ) {
 				printf( "\nFailed to start listening.\n" );
 			} else {
 				state |= intListenerState::INTLISTENER_STARTED;
@@ -36,9 +37,9 @@ IntListener::~IntListener() {
 		close( connections[i].socket );
 		FD_CLR( connections[i].socket, &active_fd_set );
 	}
-	if( socket >= 0 ) {
-		close( socket );
-		FD_CLR( socket, &active_fd_set );
+	if( socketfd >= 0 ) {
+		close( socketfd );
+		FD_CLR( socketfd, &active_fd_set );
 	}
 	state = 0;
 }
@@ -54,11 +55,11 @@ void IntListener::AcceptAndReceive() {
 	}
 	for( int i = 0; i < FD_SETSIZE; i++ ) {
 		if( FD_ISSET(i, &read_fd_set ) ) {
-			if( i == socket ) {
+			if( i == socketfd ) {
 				// Accepting connections
 				ConnectionData cd;
 				socklen_t length = sizeof(struct sockaddr_in);
-				cd.socket = accept( socket, (struct sockaddr*) &(cd.address), &length );
+				cd.socket = accept( socketfd, (struct sockaddr*) &(cd.address), &length );
 				if( -1 < cd.socket ) {
 					connections.push_back( cd );
 					FD_SET( cd.socket, &active_fd_set );
@@ -74,7 +75,7 @@ void IntListener::AcceptAndReceive() {
 				if( 0 < valread) {
 					MessageData md;
 					md.message = std::string( buffer, valread );
-					md.connectionIDofInternal = connectionID;
+					md.internalConnectionID = connectionID;
 					md.addr_from = std::string( inet_ntoa( connections[connectionID].address.sin_addr ) );
 					md.port_from = connections[connectionID].address.sin_port;
 					md.addr_to = "127.0.0.1";
@@ -95,7 +96,7 @@ ssize_t IntListener::Send( int connectionID, std::string message ) {
 		if( connectionID < connections.size() ) {
 			return send( connections[connectionID].socket , message.c_str(), message.length(), 0 );
 		} else {
-			printf( "\Invalid connectionID.\n" );
+			printf( "\nInvalid connectionID.\n" );
 		}
 	} else {
 		printf( "\nCannot send message. Socket is invalid or is not connected.\n" );

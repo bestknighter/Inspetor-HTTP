@@ -3,7 +3,9 @@
 #include <sys/select.h>
 #include <cstdlib>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <string>
+#include <cstring>
 #include <vector>
 #include <unistd.h>
 

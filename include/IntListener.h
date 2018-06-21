@@ -3,7 +3,9 @@
 #include <sys/select.h>
 #include <cstdlib>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <string>
+#include <cstring>
 #include <vector>
 #include <unistd.h>
 
@@ -21,16 +23,6 @@ public:
 
 	std::vector< MessageData > messagesReceived;
 private:
-	int port;
-	int socket;
-	short state;
-	std::vector< ConnectionData > connections;
-	fd_set active_fd_set;
-	fd_set read_fd_set;
-	struct timeval timeout;
-	
-	struct sockaddr_in address;
-
 	typedef struct {
 		int socket;
 		struct sockaddr_in address;
@@ -44,6 +36,16 @@ private:
 		INTLISTENER_RUNNING = 1 << 3,
 		SHUTTING_DOWN = 1 << 4
 	} IntListenerState;
+
+	int port;
+	int socketfd;
+	short state;
+	std::vector< ConnectionData > connections;
+	fd_set active_fd_set;
+	fd_set read_fd_set;
+	struct timeval timeout;
+	
+	struct sockaddr_in address;
 };
 
 };

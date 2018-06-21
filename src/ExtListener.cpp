@@ -27,7 +27,7 @@ ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int por
 	if( (si.socket = socket( AF_INET, SOCK_STREAM, 0 )) < 0 ) {
 		printf( "\nSocket creation error\n" );
 	} else {
-		memset( &(si.serv_addr), '0', sizeof( serv_addr ) );
+		memset( &(si.serv_addr), '0', sizeof( si.serv_addr ) );
 
 		si.serv_addr.sin_family = AF_INET;
 		si.serv_addr.sin_port = htons( port );
@@ -35,7 +35,7 @@ ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int por
 		// Convert IPv4 and IPv6 addresses from text to binary form
 		if( inet_pton( AF_INET, addr.c_str(), &(si.serv_addr.sin_addr) ) <= 0 ) {
 			printf( "\nInvalid address / Address not supported.\n" );
-		} else if( connect( si.socket, (struct sockaddr *) &(si.serv_addr), sizeof(serv_addr) ) < 0 ) {
+		} else if( connect( si.socket, (struct sockaddr *) &(si.serv_addr), sizeof(si.serv_addr) ) < 0 ) {
 			printf( "\nConnection Failed\n" );
 		} else {
 			connections.push_back( si );
@@ -49,7 +49,7 @@ ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int por
 void ExtListener::ReceiveMessages() {
 	read_fd_set = active_fd_set;
 	timeout.tv_sec = 0;
-	timeout.tv_usec = INTLISTENER_TIMEOUT_MS;
+	timeout.tv_usec = EXTLISTENER_TIMEOUT_MS;
 
 	if( select( FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout ) < 0 ) {
 		printf( "\nCould not wait on select for sockets.\n" );
@@ -66,11 +66,11 @@ void ExtListener::ReceiveMessages() {
 			if( 0 < valread) {
 				MessageData md;
 				md.message = std::string( buffer, valread );
-				md.connectionIDofInternal = connections[connectionID].connectionIDofInternal;
-				md.addr_from = connections[connectionID].addr ) );
+				md.internalConnectionID = connections[connectionID].connectionIDofInternal;
+				md.addr_from = connections[connectionID].addr;
 				md.port_from = connections[connectionID].port;
 				md.addr_to = "127.0.0.1";
-				md.port_to = port;
+				md.port_to = 8228;
 				messagesReceived.push_back( md );
 			} else if( 0 == valread ) {
 				close( i );
