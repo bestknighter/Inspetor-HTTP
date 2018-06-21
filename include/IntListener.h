@@ -1,4 +1,3 @@
-#include <cstdio>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/select.h>
@@ -7,24 +6,16 @@
 #include <string>
 #include <vector>
 
+#include "MessageData.h"
+
 namespace Socket {
 
-class Server {
+class IntListener {
 public:
-	typedef struct messageData {
-		std::string message;
-		int connectionID;
-	} MessageData;
-
-	Server( int port );
-	~Server();
+	IntListener( int port );
+	~IntListener();
 	
-	bool Start( int queueSize = 5 );
-	void Run();
-	bool IsValid();
-	bool IsReady();
-	bool IsStarted();
-	bool IsRunning();
+	void AcceptAndReceive();
 	ssize_t Send( int connectionID, std::string message );
 
 	std::vector< MessageData > messagesReceived;
@@ -39,19 +30,19 @@ private:
 	
 	struct sockaddr_in address;
 
-	typedef struct connectionData {
+	typedef struct {
 		int socket;
 		struct sockaddr_in address;
 	} ConnectionData;
 
-	typedef enum serverState : short {
+	typedef enum intListenerState : short {
 		NEWBORN = 0,
 		SOCKET_CREATED = 1 << 0,
 		SOCKET_BINDED = 1 << 1,
-		SERVER_STARTED = 1 << 2,
-		SERVER_RUNNING = 1 << 3,
+		INTLISTENER_STARTED = 1 << 2,
+		INTLISTENER_RUNNING = 1 << 3,
 		SHUTTING_DOWN = 1 << 4
-	} ServerState;
+	} IntListenerState;
 };
 
 };

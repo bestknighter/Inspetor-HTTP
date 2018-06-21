@@ -1,8 +1,13 @@
-#include "Server.h"
+#include "IntListener.h"
+
+#include <cstdio>
+
+#define INTLISTENER_TIMEOUT_MS 25
+#define QUEUESIZE 5
 
 namespace Socket {
 
-Server::Server( int port ) : port( port ), socket( -1 ), state( 0 ) {
+IntListener::IntListener( int port ) : port( port ), socket( -1 ), state( 0 ) {
 	if( (socket = socket( AF_INET, SOCK_STREAM, 0 )) < 0 ) {
 		printf( "\nSocket creation error\n" );
 	} else {
@@ -16,11 +21,16 @@ Server::Server( int port ) : port( port ), socket( -1 ), state( 0 ) {
 			state |= SOCKET_BINDED;
 			FD_ZERO( &active_fd_set );
 			FD_SET( socket, &active_fd_set );
+			if( listen( socket, queueSize ) < 0 ) {
+				printf( "\nFailed to start listening.\n" );
+			} else {
+				state |= INTLISTENER_STARTED;
+			}
 		}
 	}
 }
 
-Server::~Server() {
+IntListener::~IntListener() {
 	state = SHUTTING_DOWN;
 	for( int i = connections.size() - 1; i >= 0; i-- ) {
 		close( connections[i].socket );
@@ -33,17 +43,12 @@ Server::~Server() {
 	state = 0;
 }
 
-bool Server::Start( int queueSize ) {
-	state |= SERVER_STARTED;
-	return listen( socket, queueSize ) >= 0;
-}
-
-void Server::Run() {
-	state |= SERVER_RUNNING;
+void IntListener::AcceptAndReceive() {
+	state |= INTLISTENER_RUNNING;
 
 	read_fd_set = active_fd_set;
 	timeout.tv_sec = 0;
-	timeout.tv_usec = 250;
+	timeout.tv_usec = INTLISTENER_TIMEOUT_MS;
 	if( select( FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout ) < 0 ) {
 		printf( "\nCould not wait on select for sockets.\n" );
 	}
@@ -76,50 +81,19 @@ void Server::Run() {
 			}
 		}
 	}
-
 }
 
-bool Server::IsValid() {
-	return state > 0;
-}
-
-bool Server::IsReady() {
-	return state & SOCKET_BINDED > 0;
-}
-
-bool Server::IsStarted() {
-	return state & SERVER_STARTED > 0;
-}
-
-bool Server::IsRunning() {
-	return state & SERVER_RUNNING > 0;
-}
-
-ssize_t Server::Send( int connectionID, std::string message ) {
-	if( state & SERVER_RUNNING ) {
+ssize_t IntListener::Send( int connectionID, std::string message ) {
+	if( state & INTLISTENER_RUNNING ) {
 		if( connectionID < connections.size() ) {
 			return send( connections[connectionID].socket , message.c_str(), message.length(), 0 );
 		} else {
-			printf( "\nCannot send message. Invalid connectionID.\n" );
+			printf( "\Invalid connectionID.\n" );
 		}
 	} else {
 		printf( "\nCannot send message. Socket is invalid or is not connected.\n" );
 	}
 	return 0;
-}
-
-void Server::RunReceiver( int connectionID ) {
-	while( state & SERVER_RUNNING ) {
-		if( connectionID < connections.size() ) {
-			char buffer[1024];
-			int valread = read( connections[connectionID].socket, buffer, 1024 );
-			if( state & SERVER_RUNNING ) {
-				messagedReceived.emplace_back( std::string( buffer, valread ), connectionID );
-			}
-		} else {
-			printf( "\nCannot receive message. Invalid connectionID.\n" );
-		}
-	}
 }
 
 };
