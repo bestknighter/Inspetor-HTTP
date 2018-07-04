@@ -10,7 +10,7 @@
 namespace Socket {
 
 IntListener::IntListener( int port ) : port( port ), socketfd( -1 ), state( 0 ) {
-    errno = 0;
+	errno = 0;
 	socketfd = socket( AF_INET, SOCK_STREAM, 0 );
 	if( socketfd < 0 ) {
 		printf( "\nSocket creation error\n" );
@@ -56,61 +56,66 @@ IntListener::~IntListener() {
 }
 
 void IntListener::AcceptAndReceive() {
-    if( state & intListenerState::INTLISTENER_STARTED ) {
-	    state |= intListenerState::INTLISTENER_RUNNING;
+	if( state & intListenerState::INTLISTENER_STARTED ) {
+		state |= intListenerState::INTLISTENER_RUNNING;
 
-	    read_fd_set = active_fd_set;
-	    timeout.tv_sec = 0;
-	    timeout.tv_usec = INTLISTENER_TIMEOUT_MS;
-	    if( select( FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout ) < 0 ) {
-		    printf( "\nCould not wait on select for sockets.\n" );
-		    selectError();
-	    }
-	    for( int i = 0; i < FD_SETSIZE; i++ ) {
-		    if( FD_ISSET(i, &read_fd_set ) ) {
-			    if( i == socketfd ) {
-				    // Accepting connections
-				    ConnectionData cd;
-				    socklen_t length = sizeof(struct sockaddr_in);
-				    cd.socket = accept( socketfd, (struct sockaddr*) &(cd.address), &length );
-				    if( -1 < cd.socket ) {
-					    connections.push_back( cd );
-					    FD_SET( cd.socket, &active_fd_set );
-				    } else {
-					    printf( "\nCould not accept socket.\n" );
-					    acceptError();
-				    }
-			    } else {
-				    // Receiving data
-				    int connectionID;
-				    for( connectionID = 0; connectionID < (int) connections.size(); connectionID++ ) {
-					    if( connections[connectionID].socket == i ) break;
-				    }
-				    char buffer[1024];
-				    int valread = read( i, buffer, 1024 );
-				    if( 0 < valread) {
-					    MessageData md;
-					    md.message = std::string( buffer, valread );
-					    md.internalConnectionID = connectionID;
-					    md.addr_from = std::string( inet_ntoa( connections[connectionID].address.sin_addr ) );
-					    md.port_from = connections[connectionID].address.sin_port;
-					    md.addr_to = "127.0.0.1";
-					    md.port_to = port;
-					    messagesReceived.push_back( md );
-				    } else if( 0 == valread ) {
-					    if( close( i ) < 0 ) {
-						    closeError();
-					    }
-					    FD_CLR( i, &active_fd_set );
-					    connections.erase( connections.begin() + connectionID );
-				    } else {
-					    printf( "\nCould not read data.\n" );
-					    readError();
-				    }
-			    }
-		    }
-	    }
-    }
+		read_fd_set = active_fd_set;
+		timeout.tv_sec = 0;
+		timeout.tv_usec = INTLISTENER_TIMEOUT_MS;
+		if( select( FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout ) < 0 ) {
+			printf( "\nCould not wait on select for sockets.\n" );
+			selectError();
+		}
+		for( int i = 0; i < FD_SETSIZE; i++ ) {
+			if( FD_ISSET(i, &read_fd_set ) ) {
+				if( i == socketfd ) {
+					// Accepting connections
+					ConnectionData cd;
+					socklen_t length = sizeof(struct sockaddr_in);
+					cd.socket = accept( socketfd, (struct sockaddr*) &(cd.address), &length );
+					if( -1 < cd.socket ) {
+						connections.push_back( cd );
+						FD_SET( cd.socket, &active_fd_set );
+					} else {
+						printf( "\nCould not accept socket.\n" );
+						acceptError();
+					}
+				} else {
+					// Receiving data
+					int connectionID;
+					for( connectionID = 0; connectionID < (int) connections.size(); connectionID++ ) {
+						if( connections[connectionID].socket == i ) break;
+					}
+					int valread = 0;
+					std::string message("");
+					do {
+						char buffer[1024];
+						valread = read( i, buffer, sizeof( buffer ) );
+						message += std::string( buffer, valread );
+					} while (1024 == valread);
+					if( 0 < valread) {
+						MessageData md;
+						md.message = message;
+						md.internalConnectionID = connectionID;
+						md.addr_from = std::string( inet_ntoa( connections[connectionID].address.sin_addr ) );
+						md.port_from = connections[connectionID].address.sin_port;
+						md.addr_to = "127.0.0.1";
+						md.port_to = port;
+						messagesReceived.push_back( md );
+					} else if( 0 == valread ) {
+						if( close( i ) < 0 ) {
+							closeError();
+						}
+						FD_CLR( i, &active_fd_set );
+						connections.erase( connections.begin() + connectionID );
+					} else {
+						printf( "\nCould not read data.\n" );
+						readError();
+					}
+				}
+			}
+		}
+	}
 }
 
 ssize_t IntListener::Send( int connectionID, std::string message ) {

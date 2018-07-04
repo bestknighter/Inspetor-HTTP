@@ -75,11 +75,16 @@ void ExtListener::ReceiveMessages() {
 			for( connectionID = 0; connectionID < (int) connections.size(); connectionID++ ) {
 				if( connections[connectionID].socket == i ) break;
 			}
-			char buffer[1024];
-			int valread = read( i, buffer, 1024 );
+			int valread = 0;
+			std::string message("");
+			do {
+				char buffer[1024];
+				valread = read( i, buffer, sizeof( buffer ) );
+				message += std::string( buffer, valread );
+			} while (1024 == valread);
 			if( 0 < valread) {
 				MessageData md;
-				md.message = std::string( buffer, valread );
+				md.message = message;
 				md.internalConnectionID = connections[connectionID].connectionIDofInternal;
 				md.addr_from = connections[connectionID].addr;
 				md.port_from = connections[connectionID].port;
