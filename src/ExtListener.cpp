@@ -1,6 +1,7 @@
 #include "ExtListener.h"
 
 #include <cstdio>
+#include <netdb.h>
 
 #include "ErrorPrinter.h"
 
@@ -23,9 +24,15 @@ ExtListener::~ExtListener() {
 }
 
 ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int port, std::string message ) {
+	struct hostent* host = gethostbyname( addr.c_str() );
+	if( nullptr == host ) {
+		printf( "\nCould not find host.\n" );
+		return -1;
+	}
+
 	SocketInfo si;
 	si.socket = -1;
-	si.addr = addr;
+	si.addr = std::string( host->h_addr_list[0] );
 	si.port = port;
 	si.connectionIDofInternal = connectionIDofInternal;
 
@@ -38,10 +45,7 @@ ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int por
 		si.serv_addr.sin_family = AF_INET;
 		si.serv_addr.sin_port = htons( port );
 
-		// Convert IPv4 and IPv6 addresses from text to binary form
-		if( inet_pton( AF_INET, addr.c_str(), &(si.serv_addr.sin_addr) ) <= 0 ) {
-			printf( "\nInvalid address / Address not supported.\n" );
-		} else if( connect( si.socket, (struct sockaddr *) &(si.serv_addr), sizeof(si.serv_addr) ) < 0 ) {
+		if( connect( si.socket, (struct sockaddr *) &(si.serv_addr), sizeof(si.serv_addr) ) < 0 ) {
 			printf( "\nConnection Failed\n" );
 			connectError();
 		} else {
