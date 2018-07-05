@@ -9,7 +9,7 @@
 
 namespace Socket {
 
-ExtListener::ExtListener() {
+ExtListener::ExtListener( int port ) : port( port ) {
     errno = 0;
 	FD_ZERO( &active_fd_set );
 }
@@ -93,7 +93,7 @@ void ExtListener::ReceiveMessages() {
 				md.addr_from = connections[connectionID].addr;
 				md.port_from = connections[connectionID].port;
 				md.addr_to = "127.0.0.1";
-				md.port_to = 8228;
+				md.port_to = port;
 				messagesReceived.push_back( md );
 			} else if( 0 == valread ) {
 				if( close( i ) < 0 ) {

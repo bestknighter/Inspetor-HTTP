@@ -2,7 +2,7 @@
 
 #include "Header.h"
 
-ServidorProxy::ServidorProxy( int port ) : il( port ), el() {}
+ServidorProxy::ServidorProxy( int port ) : il( port ), el( port ) {}
 
 ServidorProxy::~ServidorProxy() {}
 

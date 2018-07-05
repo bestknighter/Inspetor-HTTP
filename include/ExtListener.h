@@ -18,7 +18,7 @@ namespace Socket {
 
 class ExtListener {
 public:
-	ExtListener();
+	ExtListener( int port );
 	~ExtListener();
 	
 	ssize_t Send( int connectionIDofInternal, std::string addr, int port, std::string message );
@@ -34,6 +34,7 @@ private:
 		int connectionIDofInternal;
 	} SocketInfo;
 
+	int port;
 	std::vector< SocketInfo > connections;
 	fd_set active_fd_set;
 	fd_set read_fd_set;
