@@ -98,7 +98,7 @@ void IntListener::AcceptAndReceive() {
 						md.message = message;
 						md.internalConnectionID = connectionID;
 						md.addr_from = std::string( inet_ntoa( connections[connectionID].address.sin_addr ) );
-						md.port_from = connections[connectionID].address.sin_port;
+						md.port_from = ntohs( connections[connectionID].address.sin_port );
 						md.addr_to = "127.0.0.1";
 						md.port_to = port;
 						messagesReceived.push_back( md );
