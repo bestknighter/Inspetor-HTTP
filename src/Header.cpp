@@ -2,15 +2,15 @@
 
 namespace HTTP {
 
-Header::Header( std::string header ) {
-	if( !header.empty() ) {
+Header::Header( std::string& str ) {
+	if( !str.empty() ) {
 		unsigned int first = 0;
-		unsigned int last = header.find( "\r\n" );
-		firstLine = header.substr( first, last );
+		unsigned int last = str.find( "\r\n" );
+		firstLine = str.substr( first, last );
 		
 		first = last + 2;
-		while( ( last = header.find( "\r\n", first ), last ) > first ) {
-			std::string line = header.substr( first, last );
+		while( ( last = str.find( "\r\n", first ), last ) > first ) {
+			std::string line = str.substr( first, last-first );
 			unsigned int division = line.find( ":" );
 			std::string property = line.substr( 0, division );
 			std::string value = line.substr( division + 2 );
@@ -31,20 +31,20 @@ Header::Header( std::string header ) {
 		if( host.empty() ) {
 			unsigned int begin = firstLine.find( "//" ) + 2;
 			unsigned int end = firstLine.find( "/", begin );
-			std::string value = firstLine.substr( begin, end );
+			std::string value = firstLine.substr( begin, end-begin );
 			unsigned int division = value.rfind( ":" );
 			host = value.substr( 0, division );
 			if( division < value.size() )
 				port = value.substr( division + 1 );
 		}
 		if( '[' == host[0] ) {
-			host = host.substr( 1, host.size()-1 );
+			host = host.substr( 1, host.size()-2 );
 		}
 		if( port.empty() ) {
 			port = "80";
 		}
 
-		body = header.substr( first + 2 );
+		body = str.substr( first + 2 );
 	}
 }
 

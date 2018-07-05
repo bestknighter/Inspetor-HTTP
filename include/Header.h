@@ -10,7 +10,7 @@
 namespace HTTP {
 
 struct Header {
-	Header( std::string header );
+	Header( std::string& str );
 
 	std::string to_string();
 
