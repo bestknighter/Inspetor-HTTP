@@ -2,6 +2,7 @@
 
 #include <cstdio>
 #include <netdb.h>
+#include <sys/types.h>
 
 #include "ErrorPrinter.h"
 
@@ -24,40 +25,54 @@ ExtListener::~ExtListener() {
 }
 
 ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int port, std::string message ) {
-	struct hostent* host = gethostbyname( addr.c_str() );
-	if( nullptr == host ) {
-		printf( "\nCould not find host.\n" );
+	SocketInfo si;
+	struct addrinfo *ai, *aip;
+	
+	struct addrinfo hints;
+	memset(&hints, 0, sizeof(struct addrinfo));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = 0;
+	hints.ai_protocol = 0; /* Any protocol */
+
+	if( (int s = getaddrinfo( addr.c_str(), htons( port ), &hints, &ai ), 0 > s) ) {
+		printf( "\nError when looking up name.\n" );
+		printf( "getaddrinfo: %s\n", gai_strerror( s ) );
 		return -1;
 	}
 
-	SocketInfo si;
-	si.socket = -1;
-	si.addr = std::string( host->h_addr_list[0] );
-	si.port = port;
-	si.connectionIDofInternal = connectionIDofInternal;
-
-	if( (si.socket = socket( AF_INET, SOCK_STREAM, 0 )) < 0 ) {
-		printf( "\nSocket creation error\n" );
-		socketError();
-	} else {
-		memset( &(si.serv_addr), '0', sizeof( si.serv_addr ) );
-
-		si.serv_addr.sin_family = AF_INET;
-		si.serv_addr.sin_port = htons( port );
-
-		if( connect( si.socket, (struct sockaddr *) &(si.serv_addr), sizeof(si.serv_addr) ) < 0 ) {
-			printf( "\nConnection Failed\n" );
-			connectError();
+	for (aip = ai; aip != NULL; aip = aip->ai_next) {
+		si.socket = socket(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
+		if( -1 == si.socket ) {
+			printf( "\nFailed creating socket. Trying another address...\n" );
+			continue;
+		}
+		if( 0 > connect( si.socket, aip->ai_addr, aip->ai_addrlen ) ) {
+			printf( "\nFailed connecting socket. Trying another address...\n" );
+			close( si.socket );
 		} else {
-			connections.push_back( si );
-			FD_SET( si.socket, &active_fd_set );
-			ssize_t sent = send( si.socket, message.c_str(), message.length(), 0 );
-			if( sent < -1 ) {
-				printf( "\nCould not send data.\n" );
-				sendError();
-			} else {
-				return sent;
-			}
+			break;
+		}
+	}
+
+	if( NULL == aip ) {
+		printf( "\nCould not connect...\n");
+		freeaddrinfo(ai);
+	} else {
+		std::memcpy( &(si.serv_addr), aip->ai_addr, api->ai_addrlen );
+		si.addr = std::string( inet_ntoa( si.serv_addr.sin_addr ) );
+		si.port = ntohs( si.serv_addr.sin_port );
+		si.connectionIDofInternal = connectionIDofInternal;
+		freeaddrinfo(ai);
+
+		connections.push_back( si );
+		FD_SET( si.socket, &active_fd_set );
+		ssize_t sent = send( si.socket, message.c_str(), message.length(), 0 );
+		if( sent < -1 ) {
+			printf( "\nCould not send data.\n" );
+			sendError();
+		} else {
+			return sent;
 		}
 	}
 	return -1;
