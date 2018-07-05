@@ -12,7 +12,7 @@ namespace HTTP {
 struct Header {
 	Header( std::string& str );
 
-	std::string to_string();
+	std::string to_string( bool includeBody = true );
 
 	std::string firstLine;
 	std::vector< field > fields;

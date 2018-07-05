@@ -28,6 +28,8 @@ ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int por
 	SocketInfo si;
 	struct addrinfo *ai, *aip;
 	
+	si.connectionIDofInternal = connectionIDofInternal;
+
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_INET;
@@ -35,20 +37,26 @@ ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int por
 	hints.ai_flags = 0;
 	hints.ai_protocol = 0; /* Any protocol */
 
-	if( (int s = getaddrinfo( addr.c_str(), htons( port ), &hints, &ai ), 0 > s) ) {
+	int s = getaddrinfo( addr.c_str(), std::to_string( port ).c_str(), &hints, &ai );
+	if( 0 > s ) {
 		printf( "\nError when looking up name.\n" );
 		printf( "getaddrinfo: %s\n", gai_strerror( s ) );
 		return -1;
 	}
 
-	for (aip = ai; aip != NULL; aip = aip->ai_next) {
+	for( aip = ai; aip != NULL; aip = aip->ai_next ) {
+		std::memcpy( &(si.serv_addr), aip->ai_addr, aip->ai_addrlen );
+		si.addr = std::string( inet_ntoa( si.serv_addr.sin_addr ) );
+		si.port = ntohs( si.serv_addr.sin_port );
 		si.socket = socket(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
 		if( -1 == si.socket ) {
 			printf( "\nFailed creating socket. Trying another address...\n" );
+			socketError();
 			continue;
 		}
 		if( 0 > connect( si.socket, aip->ai_addr, aip->ai_addrlen ) ) {
 			printf( "\nFailed connecting socket. Trying another address...\n" );
+			connectError();
 			close( si.socket );
 		} else {
 			break;
@@ -57,14 +65,7 @@ ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int por
 
 	if( NULL == aip ) {
 		printf( "\nCould not connect...\n");
-		freeaddrinfo(ai);
 	} else {
-		std::memcpy( &(si.serv_addr), aip->ai_addr, api->ai_addrlen );
-		si.addr = std::string( inet_ntoa( si.serv_addr.sin_addr ) );
-		si.port = ntohs( si.serv_addr.sin_port );
-		si.connectionIDofInternal = connectionIDofInternal;
-		freeaddrinfo(ai);
-
 		connections.push_back( si );
 		FD_SET( si.socket, &active_fd_set );
 		ssize_t sent = send( si.socket, message.c_str(), message.length(), 0 );
@@ -72,9 +73,11 @@ ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int por
 			printf( "\nCould not send data.\n" );
 			sendError();
 		} else {
+			freeaddrinfo(ai);
 			return sent;
 		}
 	}
+	freeaddrinfo(ai);
 	return -1;
 }
 

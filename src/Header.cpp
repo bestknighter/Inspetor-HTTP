@@ -48,7 +48,7 @@ Header::Header( std::string& str ) {
 	}
 }
 
-std::string Header::to_string() {
+std::string Header::to_string( bool includeBody ) {
 	std::string request( "" );
 
 	request += firstLine + "\r\n";
@@ -58,7 +58,7 @@ std::string Header::to_string() {
 	}
 
 	request += "\r\n";
-	request += body;
+	request += includeBody ? body : "<body>";
 
 	return request;
 }

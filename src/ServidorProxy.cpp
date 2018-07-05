@@ -17,7 +17,7 @@ bool ServidorProxy::Loop() {
 			, il.messagesReceived[i].port_from
 			, header.host.c_str()
 			, header.port.c_str()
-			, il.messagesReceived[i].message.c_str()
+			, header.to_string( false ).c_str()
 		);
 		el.Send( il.messagesReceived[i].internalConnectionID, header.host.c_str(), std::atoi( header.port.c_str() ), il.messagesReceived[i].message );
 	}
@@ -33,9 +33,9 @@ bool ServidorProxy::Loop() {
 			, el.messagesReceived[i].port_from
 			, header.host.c_str()
 			, header.port.c_str()
-			, el.messagesReceived[i].message.c_str()
+			, header.to_string( false ).c_str()
 		);
-		//il.Send( el.messagesReceived[i].internalConnectionID, el.messagesReceived[i].message );
+		il.Send( el.messagesReceived[i].internalConnectionID, el.messagesReceived[i].message );
 	}
 	el.messagesReceived.clear();
 	return true;
