@@ -11,12 +11,12 @@ bool ServidorProxy::Loop() {
 	il.AcceptAndReceive();
 	if(0 < (int) il.messagesReceived.size() ) printf( "\nThere are %d outbound packets.\n", (int) il.messagesReceived.size() );
 	for( int i = 0; i < (int) il.messagesReceived.size(); i++ ) {
-		Http::Header header( il.messagesReceived[i].message );
+		HTTP::Header header( il.messagesReceived[i].message );
 		printf( "\nMessage from %s:%d to %s:%s\n%s\n"
 			, il.messagesReceived[i].addr_from.c_str()
 			, il.messagesReceived[i].port_from
-			, il.messagesReceived[i].header.host.c_str()
-			, il.messagesReceived[i].header.port.c_str()
+			, header.host.c_str()
+			, header.port.c_str()
 			, il.messagesReceived[i].message.c_str()
 		);
 		//el.Send( il.messagesReceived[i].internalConnectionID, il.messagesReceived[i].addr_to, il.messagesReceived[i].port_to, il.messagesReceived[i].message );
@@ -27,12 +27,13 @@ bool ServidorProxy::Loop() {
 	el.ReceiveMessages();
 	if(0 < (int) el.messagesReceived.size() ) printf( "\nThere are %d inbound packets.\n", (int) el.messagesReceived.size() );
 	for( int i = 0; i < (int) el.messagesReceived.size(); i++ ) {
-		printf( "\nMessage from %s:%d to %s:%d\n%s\n"
-			, il.messagesReceived[i].addr_from.c_str()
-			, il.messagesReceived[i].port_from
-			, il.messagesReceived[i].addr_to.c_str()
-			, il.messagesReceived[i].port_to
-			, il.messagesReceived[i].message.c_str()
+		HTTP::Header header( el.messagesReceived[i].message );
+		printf( "\nMessage from %s:%d to %s:%s\n%s\n"
+			, el.messagesReceived[i].addr_from.c_str()
+			, el.messagesReceived[i].port_from
+			, header.host.c_str()
+			, header.port.c_str()
+			, el.messagesReceived[i].message.c_str()
 		);
 		//il.Send( el.messagesReceived[i].internalConnectionID, el.messagesReceived[i].message );
 	}
