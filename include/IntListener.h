@@ -1,55 +1,30 @@
 #ifndef INTLISTENER_H
 #define INTLISTENER_H
 
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/select.h>
-#include <cstdlib>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <string>
-#include <cstring>
 #include <vector>
+#include <queue>
+#include <memory>
+
 #include <unistd.h>
 
-#include "MessageData.h"
-
-namespace Socket {
+#include "Socket.h"
+#include "Header.h"
 
 class IntListener {
 public:
 	IntListener( int port );
 	~IntListener();
 	
-	void AcceptAndReceive();
-	ssize_t Send( int connectionID, std::string message );
+	void acceptConnections();
+	void receiveRequests();
+	void closeSocket( int fileDescriptor );
+	ssize_t sendResponse( int fileDescriptor, std::string message );
 
-	std::vector< MessageData > messagesReceived;
+	std::queue< std::tuple< std::weak_ptr< Socket >, HTTP::Header > > requestsReceived; // Socket que pediu; O que pediu
 private:
-	typedef struct {
-		int socket;
-		struct sockaddr_in address;
-	} ConnectionData;
-
-	typedef enum intListenerState : short {
-		NEWBORN = 0,
-		SOCKET_CREATED = 1 << 0,
-		SOCKET_BINDED = 1 << 1,
-		INTLISTENER_STARTED = 1 << 2,
-		INTLISTENER_RUNNING = 1 << 3,
-		SHUTTING_DOWN = 1 << 4
-	} IntListenerState;
-
-	int port;
-	int socketfd;
-	short state;
-	std::vector< ConnectionData > connections;
-	fd_set active_fd_set;
-	fd_set read_fd_set;
-	struct timeval timeout;
-	
-	struct sockaddr_in address;
-};
+	Socket listeningSocket;
+	std::vector< std::shared_ptr< Socket > > connectedSockets;
 
 };
 

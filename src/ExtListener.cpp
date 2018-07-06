@@ -1,130 +1,137 @@
 #include "ExtListener.h"
 
+#include <cstdlib>
 #include <cstdio>
-#include <netdb.h>
-#include <sys/types.h>
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <poll.h>
 
 #include "ErrorPrinter.h"
 
-#define EXTLISTENER_TIMEOUT_MS 25
+#define EXTLISTENER_BUFFER_SIZE 1024
 
-namespace Socket {
-
-ExtListener::ExtListener( int port ) : port( port ) {
-    errno = 0;
-	FD_ZERO( &active_fd_set );
-}
+ExtListener::ExtListener() {}
 
 ExtListener::~ExtListener() {
-	for( int i = connections.size() - 1; i >= 0; i-- ) {
-		if( close( connections[i].socket ) < 0 ) {
-			closeError();
-		}
-		FD_CLR( connections[i].socket, &active_fd_set );
+	while( createdSockets.size() > 0 ) {
+		createdSockets.erase( createdSockets.end() );
 	}
 }
 
-ssize_t ExtListener::Send( int connectionIDofInternal, std::string addr, int port, std::string message ) {
-	SocketInfo si;
-	struct addrinfo *ai, *aip;
-	
-	si.connectionIDofInternal = connectionIDofInternal;
-
-	struct addrinfo hints;
-	memset(&hints, 0, sizeof(struct addrinfo));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = 0;
-	hints.ai_protocol = 0; /* Any protocol */
-
-	int s = getaddrinfo( addr.c_str(), std::to_string( port ).c_str(), &hints, &ai );
-	if( 0 > s ) {
-		printf( "\nError when looking up name.\n" );
-		printf( "getaddrinfo: %s\n", gai_strerror( s ) );
-		return -1;
-	}
-
-	for( aip = ai; aip != NULL; aip = aip->ai_next ) {
-		std::memcpy( &(si.serv_addr), aip->ai_addr, aip->ai_addrlen );
-		si.addr = std::string( inet_ntoa( si.serv_addr.sin_addr ) );
-		si.port = ntohs( si.serv_addr.sin_port );
-		si.socket = socket(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
-		if( -1 == si.socket ) {
-			printf( "\nFailed creating socket. Trying another address...\n" );
-			socketError();
-			continue;
+ssize_t ExtListener::sendRequest( std::weak_ptr< Socket > requestingSocket, HTTP::Header request ) {
+	std::tuple< std::shared_ptr< Socket >, std::weak_ptr< Socket > socketPair;
+	int n = findSocketPair(requestingSocket);
+	if( -1 == n ) { // Nao encontrou um par
+		Socket* s = new Socket();
+		if( s->connect( request.host, request.port ) ) { // Sucesso ao conectar
+			socketPair = std::make_tuple( std::shared_ptr(s), requestingSocket );
+			createdSockets.push_back( socketPair );
+		} else { // Falha ao conectar
+			fprintf( stderr, "\nCould not connect to send request.\n" );
+			delete s;
+			return -1;
 		}
-		if( 0 > connect( si.socket, aip->ai_addr, aip->ai_addrlen ) ) {
-			printf( "\nFailed connecting socket. Trying another address...\n" );
-			connectError();
-			close( si.socket );
-		} else {
-			break;
-		}
+	} else { // Achou um par
+		socketPair = createdSocket[n];
 	}
-
-	if( NULL == aip ) {
-		printf( "\nCould not connect...\n");
-	} else {
-		connections.push_back( si );
-		FD_SET( si.socket, &active_fd_set );
-		ssize_t sent = send( si.socket, message.c_str(), message.length(), 0 );
-		if( sent < -1 ) {
-			printf( "\nCould not send data.\n" );
-			sendError();
-		} else {
-			freeaddrinfo(ai);
-			return sent;
-		}
+	// So chega nessa parte se tiver um par, seja criado ou encontrado
+	ssize_t sent = send( std::get<0>(socketPair)->getFileDescriptor(), request.to_string().c_str(), request.to_string().length(), 0 );
+	if( sent < 0 ) {
+		printf( "\nCould not send data.\n" );
+		sendError();
 	}
-	freeaddrinfo(ai);
-	return -1;
+	return sent;
 }
 
-void ExtListener::ReceiveMessages() {
-	read_fd_set = active_fd_set;
-	timeout.tv_sec = 0;
-	timeout.tv_usec = EXTLISTENER_TIMEOUT_MS;
-
-	if( select( FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout ) < 0 ) {
-		printf( "\nCould not wait on select for sockets.\n" );
-		selectError();
+void ExtListener::receiveResponses() {
+	trimSockets();
+	// Lista de pollfds representa cada socket que pode ter atualizacao
+	struct pollfd **fds = (struct pollfd**) malloc( sizeof(struct pollfd*)*createdSockets.size() );
+	for( int i = 0; i < createdSockets.size(); i++ ) {
+		fds[i] = new struct pollfd( std::get<0>(createdSockets[i])->getFileDescriptor(), POLLIN | POLLPRI, 0 );
 	}
-	for( int i = 0; i < FD_SETSIZE; i++ ) {
-		if( FD_ISSET(i, &read_fd_set ) ) {
-			// Receiving data
-			int connectionID;
-			for( connectionID = 0; connectionID < (int) connections.size(); connectionID++ ) {
-				if( connections[connectionID].socket == i ) break;
-			}
-			int valread = 0;
-			std::string message("");
-			do {
-				char buffer[1024];
-				valread = read( i, buffer, sizeof( buffer ) );
-				message += std::string( buffer, valread );
-			} while (1024 == valread);
-			if( 0 < valread) {
-				MessageData md;
-				md.message = message;
-				md.internalConnectionID = connections[connectionID].connectionIDofInternal;
-				md.addr_from = connections[connectionID].addr;
-				md.port_from = connections[connectionID].port;
-				md.addr_to = "127.0.0.1";
-				md.port_to = port;
-				messagesReceived.push_back( md );
-			} else if( 0 == valread ) {
-				if( close( i ) < 0 ) {
-					closeError();
+
+	int n = poll( *fds, createdSockets.size(), 0 ); // Verifica se tem algun socket criado que tem coisa para ser lida agora
+	if( n < 0 ) { // n negativo significa erro
+		fprintf( stderr, "\nError when polling createdSockets.\n" );
+		pollError();
+	} else if( n > 0 ) { // n positivo significa que tem n sockets com dados prontos para serem lidos
+		for( int i = createdSockets.size() - 1; i <= 0; i-- ) {
+			if( (POLLIN | POLLPRI) & fds[i].revents ) { // So pra ter certeza que sao os eventos que quero
+				int valread = 0;
+				std::string message("");
+				do {
+					char buffer[EXTLISTENER_BUFFER_SIZE];
+					valread = read( std::get<0>(createdSockets[i])->getFileDescriptor(), buffer, sizeof( buffer ) );
+					message += std::string( buffer, valread );
+				} while (EXTLISTENER_BUFFER_SIZE == valread);
+				if( valread < 0 ) { // Erro ao ler socket
+					fprintf( stderr, "\nCould not read data.\n" );
+					readError();
+				} else if( valread == 0 ) { // Fechar socket
+					// Precisa notificar IntListener que socket externo foi fechado? Acho que nao
+					createdSockets.erase( createdSockets.begin() + i );
+				} else { // Registra mensagem recebida
+					requestsReceived.push_back( std::make_tuple( std::weak_ptr(createdSockets[i]), HTTP::Header(message) ) );
 				}
-				FD_CLR( i, &active_fd_set );
-				connections.erase( connections.begin() + connectionID );
-			} else {
-				printf( "\nCould not read data.\n" );
-				readError();
 			}
 		}
 	}
+
+	// Desaloca lista de pollfds
+	for( int i = 0; i < connectedSockets.size(); i++ ) {
+		delete fds[i];
+	}
+	free(fds);
 }
 
-};
+int ExtListener::findSocketPair( std::weak_ptr< Socket > s_w_ptr ) {
+	trimSockets();
+	if( s_w_ptr.expired() ) return -1; // Pra que testar se ja expirou?
+	for( int i = 0; i < createdSockets.size(); i++ ) {
+		if( std::get<1>( createdSockets[i] ) == s_w_ptr ) { // Sao identicos
+			return i;
+		} else {
+			std::shared_ptr inner( std::get<1>(createdSockets[i]).lock() );
+			std::shared_ptr outer( s_w_ptr.lock() );
+			if( inner.get() == outer.get() ) { // Mesmo endereco
+				if( *inner.get() == *outer.get() ) { // Objs identicos
+					return i;
+				}
+			}
+		}
+	}
+	return -1; // Nao encontrou
+}
+
+int ExtListener::findSocketPair( std::shared_ptr< Socket > s_s_ptr ) {
+	trimSockets();
+	if( s_s_ptr.get() == nullptr ) return -1; // Pra que testar se ja expirou?
+	for( int i = 0; i < createdSockets.size(); i++ ) {
+		if( std::get<0>( createdSockets[i] ) == s_s_ptr ) { // Sao identicos
+			return i;
+		} else {
+			std::shared_ptr inner( std::get<0>(createdSockets[i]) );
+			if( inner.get() == nullptr ) { // Expirou
+				// Sockets externos (de possessao de ExtListener) nunca expiram sem serem
+				// excluidos, entao esse trecho provavelmente nunca sera executado
+				continue;
+			}
+			if( inner.get() == s_s_ptr.get() ) { // Mesmo endereco
+				if( *inner.get() == *s_s_ptr.get() ) { // Objs identicos
+					return i;
+				}
+			}
+		}
+	}
+	return -1; // Nao encontrou
+}
+
+void ExtListener::trimSockets() { // Exclui pares cujo o socket interno foi excluido
+	for( int i = createdSockets.size() - 1; i <= 0 ; i-- ) {
+		std::weak_ptr< Socket > s_w_ptr = std::get<1>(createdSockets[i]);
+		if( s_w_ptr.expired() ) createdSockets.erase( createdSockets.begin() + i );
+	}
+}

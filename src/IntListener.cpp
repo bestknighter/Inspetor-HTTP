@@ -1,140 +1,101 @@
 #include "IntListener.h"
 
 #include <cstdio>
+#include <cstdlib>
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <poll.h>
 
 #include "ErrorPrinter.h"
 
-#define INTLISTENER_TIMEOUT_MS 25
+#define INTLISTENER_BUFFER_SIZE 1024
 #define QUEUESIZE 5
 
-namespace Socket {
-
-IntListener::IntListener( int port ) : port( port ), socketfd( -1 ), state( 0 ) {
-	errno = 0;
-	socketfd = socket( AF_INET, SOCK_STREAM, 0 );
-	if( socketfd < 0 ) {
-		printf( "\nSocket creation error\n" );
-		socketError();
-	} else {
-		state |= intListenerState::SOCKET_CREATED;
-		address.sin_family = AF_INET;
-		address.sin_addr.s_addr = htonl( INADDR_LOOPBACK );
-		address.sin_port = htons( port );
-		memset( &(address.sin_zero), 0, sizeof( address.sin_zero ) );
-		if( bind( socketfd, (struct sockaddr *) &address, sizeof(address) ) < 0 ) {
-			printf( "\nFailed to bind socket.\n" );
-			bindError();
-		} else {
-			state |= intListenerState::SOCKET_BINDED;
-			FD_ZERO( &active_fd_set );
-			FD_SET( socketfd, &active_fd_set );
-			if( listen( socketfd, QUEUESIZE ) < 0 ) {
-				printf( "\nFailed to start listening.\n" );
-				listenError();
-			} else {
-				state |= intListenerState::INTLISTENER_STARTED;
-			}
-		}
-	}
+IntListener::IntListener( int port ) {
+	listeningSocket.listen( "127.0.0.1", std::to_string( port ), QUEUESIZE );
 }
 
 IntListener::~IntListener() {
-	state = intListenerState::SHUTTING_DOWN;
-	for( int i = connections.size() - 1; i >= 0; i-- ) {
-		if( close( connections[i].socket ) < 0 ) {
-			closeError();
-		}
-		FD_CLR( connections[i].socket, &active_fd_set );
+	while( connectedSockets.size() > 0 ) {
+		connectedSockets.erase( connectedSockets.end() );
 	}
-	if( socketfd >= 0 ) {
-		if( close( socketfd ) < 0 ) {
-			closeError();
-		}
-		FD_CLR( socketfd, &active_fd_set );
-	}
-	state = 0;
 }
 
-void IntListener::AcceptAndReceive() {
-	if( state & intListenerState::INTLISTENER_STARTED ) {
-		state |= intListenerState::INTLISTENER_RUNNING;
-
-		read_fd_set = active_fd_set;
-		timeout.tv_sec = 0;
-		timeout.tv_usec = INTLISTENER_TIMEOUT_MS;
-		if( select( FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout ) < 0 ) {
-			printf( "\nCould not wait on select for sockets.\n" );
-			selectError();
+void IntListener::acceptConnections() {
+	struct pollfd fds( listeningSocket.getFileDescriptor(), POLLIN | POLLPRI, 0 );
+	int n = poll( &fds, 1, 0 ); // Verifica se listeningSocket tem conexoes em aguardo
+	if( n < 0 ) { // n negativo significa erro
+		fprintf( stderr, "\nError when polling listeningSocket.\n" );
+		pollError();
+	} else if ( n > 0 ) { // n positivo significa que tem conexoes em aguardo
+		int newSocketFd = accept( listeningSocket.getFileDescriptor(), nullptr, nullptr );
+		if( newSocketFd == -1 ) {
+			fprintf( stderr, "\nCould not accept new socket.\n" );
+			acceptError();
+		} else {
+			connectedSockets.emplace_back( new Socket(newSocketFd) );
 		}
-		for( int i = 0; i < FD_SETSIZE; i++ ) {
-			if( FD_ISSET(i, &read_fd_set ) ) {
-				if( i == socketfd ) {
-					// Accepting connections
-					ConnectionData cd;
-					socklen_t length = sizeof(struct sockaddr_in);
-					cd.socket = accept( socketfd, (struct sockaddr*) &(cd.address), &length );
-					if( -1 < cd.socket ) {
-						connections.push_back( cd );
-						FD_SET( cd.socket, &active_fd_set );
-					} else {
-						printf( "\nCould not accept socket.\n" );
-						acceptError();
-					}
-				} else {
-					// Receiving data
-					int connectionID;
-					for( connectionID = 0; connectionID < (int) connections.size(); connectionID++ ) {
-						if( connections[connectionID].socket == i ) break;
-					}
-					int valread = 0;
-					std::string message("");
-					do {
-						char buffer[1024];
-						valread = read( i, buffer, sizeof( buffer ) );
-						message += std::string( buffer, valread );
-					} while (1024 == valread);
-					if( 0 < valread) {
-						MessageData md;
-						md.message = message;
-						md.internalConnectionID = connectionID;
-						md.addr_from = std::string( inet_ntoa( connections[connectionID].address.sin_addr ) );
-						md.port_from = ntohs( connections[connectionID].address.sin_port );
-						md.addr_to = "127.0.0.1";
-						md.port_to = port;
-						messagesReceived.push_back( md );
-					} else if( 0 == valread ) {
-						if( close( i ) < 0 ) {
-							closeError();
-						}
-						FD_CLR( i, &active_fd_set );
-						connections.erase( connections.begin() + connectionID );
-					} else {
-						printf( "\nCould not read data.\n" );
-						readError();
-					}
+	}
+}
+
+void IntListener::receiveRequests() {
+	// Lista de pollfds representa cada socket que pode ter atualizacao
+	struct pollfd **fds = (struct pollfd**) malloc( sizeof(struct pollfd*)*connectedSockets.size() );
+	for( int i = 0; i < connectedSockets.size(); i++ ) {
+		fds[i] = new struct pollfd( connectedSockets[i]->getFileDescriptor(), POLLIN | POLLPRI, 0 );
+	}
+
+	int n = poll( *fds, connectedSockets.size(), 0 ); // Verifica se tem algun socket conectado que tem coisa para ser lida agora
+	if( n < 0 ) { // n negativo significa erro
+		fprintf( stderr, "\nError when polling connectedSockets.\n" );
+		pollError();
+	} else if( n > 0 ) { // n positivo significa que tem n sockets com dados prontos para serem lidos
+		for( int i = connectedSockets.size() - 1; i <= 0; i-- ) {
+			if( (POLLIN | POLLPRI) & fds[i].revents ) { // So pra ter certeza que sao os eventos que quero
+				int valread = 0;
+				std::string message("");
+				do {
+					char buffer[INTLISTENER_BUFFER_SIZE];
+					valread = read( connectedSockets[i]->getFileDescriptor(), buffer, sizeof( buffer ) );
+					message += std::string( buffer, valread );
+				} while (INTLISTENER_BUFFER_SIZE == valread);
+				if( valread < 0 ) { // Erro ao ler socket
+					fprintf( stderr, "\nCould not read data.\n" );
+					readError();
+				} else if( valread == 0 ) { // Fechar socket
+					connectedSockets.erase( connectedSockets.begin() + i );
+				} else { // Registra mensagem recebida
+					requestsReceived.push_back( std::make_tuple( std::weak_ptr(connectedSockets[i]), HTTP::Header(message) ) );
 				}
 			}
 		}
 	}
+
+	// Desaloca lista de pollfds
+	for( int i = 0; i < connectedSockets.size(); i++ ) {
+		delete fds[i];
+	}
+	free(fds);
 }
 
-ssize_t IntListener::Send( int connectionID, std::string message ) {
-	if( state & intListenerState::INTLISTENER_RUNNING ) {
-		if( connectionID < (int) connections.size() ) {
-			ssize_t sent = send( connections[connectionID].socket , message.c_str(), message.length(), 0 );
-			if( sent < 0 ) {
-				printf( "\nCould not send data.\n" );
-				sendError();
-			} else {
-				return sent;
-			}
-		} else {
-			printf( "\nInvalid connectionID.\n" );
+void IntListener::closeSocket( int fileDescriptor ) {
+	for( int i = 0; i < connectedSockets.size(); i++ ) {
+		if( connectedSockets[i]->getFileDescriptor() == fileDescriptor ) {
+			connectedSockets.erase( connectedSockets.begin() + i );
+			return;
 		}
+	}
+}
+
+ssize_t IntListener::sendResponse( int fileDescriptor, std::string message ) {
+	ssize_t sent = send( fileDescriptor, message.c_str(), message.length(), 0 );
+	if( sent < 0 ) {
+		printf( "\nCould not send data.\n" );
+		sendError();
 	} else {
-		printf( "\nCannot send message. Listener is not in a valid state for sending data.\n" );
+		return sent;
 	}
 	return -1;
 }
-
-};

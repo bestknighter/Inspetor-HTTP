@@ -3,8 +3,6 @@
 #include <cstdio>
 #include <errno.h>
 
-namespace Socket {
-
 int socketError() {
 	switch( errno ) {
 		/* Linux error codes */
@@ -449,5 +447,3 @@ int closeError() {
 	errno = 0;
 	return ret;
 }
-
-};

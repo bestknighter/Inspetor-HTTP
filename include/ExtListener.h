@@ -1,46 +1,32 @@
 #ifndef EXTLISTENER_H
 #define EXTLISTENER_H
 
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/select.h>
-#include <cstdlib>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <string>
-#include <cstring>
 #include <vector>
+#include <queue>
+#include <memory>
+
 #include <unistd.h>
 
-#include "MessageData.h"
-
-namespace Socket {
+#include "Socket.h"
+#include "Header.h"
 
 class ExtListener {
 public:
 	ExtListener( int port );
+	ExtListener();
 	~ExtListener();
-	
-	ssize_t Send( int connectionIDofInternal, std::string addr, int port, std::string message );
-	void ReceiveMessages();
 
-	std::vector< MessageData > messagesReceived;
+	ssize_t sendRequest( std::weak_ptr< Socket > requestingSocket, HTTP::Header request );
+	void receiveResponses();
+
+	std::queue< std::tuple< std::weak_ptr< Socket >, HTTP::Header > > responsesReceived; // Socket que deve receber; O que deve receber
 private:
-	typedef struct {
-		int socket;
-		std::string addr;
-		int port;
-		struct sockaddr_in serv_addr;
-		int connectionIDofInternal;
-	} SocketInfo;
+	int findSocketPair( std::weak_ptr< Socket > s_w_ptr );
+	int findSocketPair( std::shared_ptr< Socket > s_s_ptr );
+	void trimSockets();
 
-	int port;
-	std::vector< SocketInfo > connections;
-	fd_set active_fd_set;
-	fd_set read_fd_set;
-	struct timeval timeout;
-};
-
+	std::vector< std::tuple< std::shared_ptr< Socket >, std::weak_ptr< Socket > > createdSockets; // Socket externo; Socket interno
 };
 
 #endif // EXTLISTENER_H

@@ -33,6 +33,16 @@
 		"xstddef": "cpp",
 		"xtr1common": "cpp",
 		"vector": "cpp",
-		"xmemory": "cpp"
+		"xmemory": "cpp",
+		"tuple": "cpp",
+		"chrono": "cpp",
+		"functional": "cpp",
+		"list": "cpp",
+		"memory": "cpp",
+		"ratio": "cpp",
+		"thread": "cpp",
+		"unordered_map": "cpp",
+		"xfunctional": "cpp",
+		"xhash": "cpp"
 	}
 }

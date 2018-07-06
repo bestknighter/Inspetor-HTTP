@@ -20,6 +20,7 @@ bool ServidorProxy::Loop() {
 			, header.to_string( false ).c_str()
 		);
 		el.Send( il.messagesReceived[i].internalConnectionID, header.host.c_str(), std::atoi( header.port.c_str() ), il.messagesReceived[i].message );
+		// E se falhar a conexao?
 	}
 	il.messagesReceived.clear();
 

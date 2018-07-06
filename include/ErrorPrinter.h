@@ -1,8 +1,6 @@
 #ifndef ERRORPRINTER_H
 #define ERRORPRINTER_H
 
-namespace Socket {
-
 int socketError();
 int bindError();
 int listenError();
@@ -12,8 +10,8 @@ int acceptError();
 int readError();
 int sendError();
 int closeError();
-int printErrno();
-
-};
+int printError();
+int getsocknameError();
+int pollError();
 
 #endif // ERRORPRINTER_H
