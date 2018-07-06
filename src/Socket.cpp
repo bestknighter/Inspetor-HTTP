@@ -2,11 +2,15 @@
 
 #include <cstring>
 
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <netdb.h>
+
 #include "ErrorPrinter.h"
 
 Socket::Socket( int fileDescriptor ) : valid(false), fileDescriptor(fileDescriptor) {
 	socklen_t addr_len = sizeof( addr );
-	if( -1 == getsockname( fileDescriptor, &addr, &addr_len ) || addr_len != sizeof(addr) ) {
+	if( -1 == getsockname( fileDescriptor, (struct sockaddr*) &addr, &addr_len ) || addr_len != sizeof(addr) ) {
 		fprintf( stderr, "\nError on getsockname.\n" );
 		getsocknameError();
 	} else {
@@ -14,7 +18,7 @@ Socket::Socket( int fileDescriptor ) : valid(false), fileDescriptor(fileDescript
 	}
 }
 
-Socket::Socket() : valid(false), fileDescriptor(-1), addr(0, 0, {0}) {}
+Socket::Socket() : valid(false), fileDescriptor(-1), addr() {}
 
 Socket::~Socket() {
 	if( valid ) {
@@ -27,7 +31,7 @@ Socket::~Socket() {
 	}
 }
 
-bool Socket::connect( std::string name, std::string port, int socketFamily, int socketType, int protocol ) {
+bool Socket::connectTo( std::string name, std::string port, int socketFamily, int socketType, int protocol ) {
 	struct addrinfo *firstAddr, *addr_p;
 	
 	struct addrinfo hints;
@@ -37,7 +41,7 @@ bool Socket::connect( std::string name, std::string port, int socketFamily, int 
 	hints.ai_flags = 0;
 	hints.ai_protocol = protocol;
 
-	int s = getaddrinfo( name.c_str(), std::to_string( port ).c_str(), &hints, &firstAddr );
+	int s = getaddrinfo( name.c_str(), port.c_str(), &hints, &firstAddr );
 	if( s < 0 ) {
 		fprintf( stderr, "\nError when looking up name.\n" );
 		fprintf( stderr, "getaddrinfo: %s\n", gai_strerror( s ) );
@@ -71,7 +75,7 @@ bool Socket::connect( std::string name, std::string port, int socketFamily, int 
 	return valid;
 }
 
-bool Socket::listen( std::string name, std::string port, int queueSize, int socketFamily, int socketType, int protocol ) {
+bool Socket::listenTo( std::string name, std::string port, int queueSize, int socketFamily, int socketType, int protocol ) {
 	struct addrinfo *firstAddr, *addr_p;
 	
 	struct addrinfo hints;
@@ -81,7 +85,7 @@ bool Socket::listen( std::string name, std::string port, int queueSize, int sock
 	hints.ai_flags = 0;
 	hints.ai_protocol = protocol;
 
-	int s = getaddrinfo( name.c_str(), std::to_string( port ).c_str(), &hints, &firstAddr );
+	int s = getaddrinfo( name.c_str(), port.c_str(), &hints, &firstAddr );
 	if( s < 0 ) {
 		fprintf( stderr, "\nError when looking up name.\n" );
 		fprintf( stderr, "getaddrinfo: %s\n", gai_strerror( s ) );
@@ -141,10 +145,15 @@ uint32_t Socket::getAddress() {
 	return addr.sin_addr.s_addr;
 }
 
-std::string Socket::getPort() {
-	return std::string( ntohs( addr.sin_port ) );
+std::string Socket::getPortStr() {
+	return std::to_string( ntohs( addr.sin_port ) );
 }
 
-std::string Socket::getAddress() {
+std::string Socket::getAddressStr() {
 	return std::string( inet_ntoa( addr.sin_addr ) );
 }
+
+bool Socket::operator==( Socket &rhs ) {
+	return fileDescriptor == rhs.fileDescriptor;
+}
+

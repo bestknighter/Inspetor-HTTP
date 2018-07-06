@@ -25,8 +25,8 @@ ssize_t ExtListener::sendRequest( std::weak_ptr< Socket > requestingSocket, HTTP
 	int n = findSocketPair(requestingSocket);
 	if( -1 == n ) { // Nao encontrou um par
 		Socket* s = new Socket();
-		if( s->connect( request.host, request.port ) ) { // Sucesso ao conectar
-			socketPair = std::make_tuple( std::shared_ptr(s), requestingSocket );
+		if( s->connectTo( request.host, request.port ) ) { // Sucesso ao conectar
+			socketPair = std::make_tuple( std::shared_ptr<Socket>(s), requestingSocket );
 			createdSockets.push_back( socketPair );
 		} else { // Falha ao conectar
 			fprintf( stderr, "\nCould not connect to send request.\n" );
@@ -34,7 +34,7 @@ ssize_t ExtListener::sendRequest( std::weak_ptr< Socket > requestingSocket, HTTP
 			return -1;
 		}
 	} else { // Achou um par
-		socketPair = createdSocket[n];
+		socketPair = createdSockets[n];
 	}
 	// So chega nessa parte se tiver um par, seja criado ou encontrado
 	ssize_t sent = send( std::get<0>(socketPair)->getFileDescriptor(), request.to_string().c_str(), request.to_string().length(), 0 );
@@ -50,7 +50,11 @@ void ExtListener::receiveResponses() {
 	// Lista de pollfds representa cada socket que pode ter atualizacao
 	struct pollfd **fds = (struct pollfd**) malloc( sizeof(struct pollfd*)*createdSockets.size() );
 	for( long int i = 0; i < (long int) createdSockets.size(); i++ ) {
-		fds[i] = new struct pollfd( std::get<0>(createdSockets[i])->getFileDescriptor(), POLLIN | POLLPRI, 0 );
+		struct pollfd *fd = new struct pollfd();
+		fd->fd = std::get<0>(createdSockets[i])->getFileDescriptor();
+		fd->events = POLLIN | POLLPRI;
+		fd->revents = 0;
+		fds[i] = fd;
 	}
 
 	int n = poll( *fds, createdSockets.size(), 0 ); // Verifica se tem algun socket criado que tem coisa para ser lida agora
@@ -59,7 +63,7 @@ void ExtListener::receiveResponses() {
 		pollError();
 	} else if( n > 0 ) { // n positivo significa que tem n sockets com dados prontos para serem lidos
 		for( long int i = (long int) createdSockets.size() - 1; i >= 0; i-- ) {
-			if( (POLLIN | POLLPRI) & fds[i].revents ) { // So pra ter certeza que sao os eventos que quero
+			if( (POLLIN | POLLPRI) & fds[i]->revents ) { // So pra ter certeza que sao os eventos que quero
 				int valread = 0;
 				std::string message("");
 				do {
@@ -74,14 +78,14 @@ void ExtListener::receiveResponses() {
 					// Precisa notificar IntListener que socket externo foi fechado? Acho que nao
 					createdSockets.erase( createdSockets.begin() + i );
 				} else { // Registra mensagem recebida
-					requestsReceived.push_back( std::make_tuple( std::weak_ptr(createdSockets[i]), HTTP::Header(message) ) );
+					responsesReceived.push_back( std::make_tuple( std::get<1>(createdSockets[i]), HTTP::Header(message) ) );
 				}
 			}
 		}
 	}
 
 	// Desaloca lista de pollfds
-	for( long int i = 0; i < (long int) connectedSockets.size(); i++ ) {
+	for( long int i = 0; i < (long int) createdSockets.size(); i++ ) {
 		delete fds[i];
 	}
 	free(fds);
@@ -91,15 +95,11 @@ int ExtListener::findSocketPair( std::weak_ptr< Socket > s_w_ptr ) {
 	trimSockets();
 	if( s_w_ptr.expired() ) return -1; // Pra que testar se ja expirou?
 	for( long int i = 0; i < (long int) createdSockets.size(); i++ ) {
-		if( std::get<1>( createdSockets[i] ) == s_w_ptr ) { // Sao identicos
-			return i;
-		} else {
-			std::shared_ptr inner( std::get<1>(createdSockets[i]).lock() );
-			std::shared_ptr outer( s_w_ptr.lock() );
-			if( inner.get() == outer.get() ) { // Mesmo endereco
-				if( *inner.get() == *outer.get() ) { // Objs identicos
-					return i;
-				}
+		std::shared_ptr< Socket > inner( std::get<1>(createdSockets[i]).lock() );
+		std::shared_ptr< Socket > outer( s_w_ptr.lock() );
+		if( inner.get() == outer.get() ) { // Mesmo endereco
+			if( *inner.get() == *outer.get() ) { // Objs identicos
+				return i;
 			}
 		}
 	}
@@ -113,7 +113,7 @@ int ExtListener::findSocketPair( std::shared_ptr< Socket > s_s_ptr ) {
 		if( std::get<0>( createdSockets[i] ) == s_s_ptr ) { // Sao identicos
 			return i;
 		} else {
-			std::shared_ptr inner( std::get<0>(createdSockets[i]) );
+			std::shared_ptr< Socket > inner( std::get<0>(createdSockets[i]) );
 			if( inner.get() == nullptr ) { // Expirou
 				// Sockets externos (de possessao de ExtListener) nunca expiram sem serem
 				// excluidos, entao esse trecho provavelmente nunca sera executado

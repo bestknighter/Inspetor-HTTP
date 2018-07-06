@@ -19,7 +19,7 @@ public:
 	void acceptConnections();
 	void receiveRequests();
 	void closeSocket( int fileDescriptor );
-	ssize_t sendResponse( std::weak_ptr< Socket > receivingSocket, std::string message );
+	ssize_t sendResponse( std::weak_ptr< Socket > receivingSocket, HTTP::Header response );
 
 	std::vector< Request > requestsReceived;
 private:

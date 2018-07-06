@@ -14,7 +14,7 @@
 #define QUEUESIZE 5
 
 IntListener::IntListener( int port ) {
-	listeningSocket.listen( "127.0.0.1", std::to_string( port ), QUEUESIZE );
+	listeningSocket.listenTo( "127.0.0.1", std::to_string( port ), QUEUESIZE );
 }
 
 IntListener::~IntListener() {
@@ -24,7 +24,10 @@ IntListener::~IntListener() {
 }
 
 void IntListener::acceptConnections() {
-	struct pollfd fds( listeningSocket.getFileDescriptor(), POLLIN | POLLPRI, 0 );
+	struct pollfd fds;
+	fds.fd = listeningSocket.getFileDescriptor();
+	fds.events = POLLIN | POLLPRI;
+	fds.revents = 0;
 	int n = poll( &fds, 1, 0 ); // Verifica se listeningSocket tem conexoes em aguardo
 	if( n < 0 ) { // n negativo significa erro
 		fprintf( stderr, "\nError when polling listeningSocket.\n" );
@@ -44,7 +47,11 @@ void IntListener::receiveRequests() {
 	// Lista de pollfds representa cada socket que pode ter atualizacao
 	struct pollfd **fds = (struct pollfd**) malloc( sizeof(struct pollfd*)*connectedSockets.size() );
 	for( long int i = 0; i < (long int) connectedSockets.size(); i++ ) {
-		fds[i] = new struct pollfd( connectedSockets[i]->getFileDescriptor(), POLLIN | POLLPRI, 0 );
+		struct pollfd *fd = new struct pollfd();
+		fd->fd = connectedSockets[i]->getFileDescriptor();
+		fd->events = POLLIN | POLLPRI;
+		fd->revents = 0;
+		fds[i] = fd;
 	}
 
 	int n = poll( *fds, connectedSockets.size(), 0 ); // Verifica se tem algun socket conectado que tem coisa para ser lida agora
@@ -53,7 +60,7 @@ void IntListener::receiveRequests() {
 		pollError();
 	} else if( n > 0 ) { // n positivo significa que tem n sockets com dados prontos para serem lidos
 		for( long int i = (long int) connectedSockets.size() - 1; i >= 0; i-- ) {
-			if( (POLLIN | POLLPRI) & fds[i].revents ) { // So pra ter certeza que sao os eventos que quero
+			if( (POLLIN | POLLPRI) & fds[i]->revents ) { // So pra ter certeza que sao os eventos que quero
 				int valread = 0;
 				std::string message("");
 				do {
@@ -67,7 +74,7 @@ void IntListener::receiveRequests() {
 				} else if( valread == 0 ) { // Fechar socket
 					connectedSockets.erase( connectedSockets.begin() + i );
 				} else { // Registra mensagem recebida
-					requestsReceived.push_back( std::make_tuple( std::weak_ptr(connectedSockets[i]), HTTP::Header(message) ) );
+					requestsReceived.push_back( std::make_tuple( std::weak_ptr< Socket >(connectedSockets[i]), HTTP::Header(message) ) );
 				}
 			}
 		}
@@ -89,8 +96,12 @@ void IntListener::closeSocket( int fileDescriptor ) {
 	}
 }
 
-ssize_t IntListener::sendResponse( std::weak_ptr< Socket > receivingSocket, std::string message ) {
-	ssize_t sent = send( receivingSocket->getFileDescriptor(), message.c_str(), message.length(), 0 );
+ssize_t IntListener::sendResponse( std::weak_ptr< Socket > receivingSocket, HTTP::Header response ) {
+    if( receivingSocket.expired() ) {
+    	printf( "\nCouldn't send data. Internal connection already closed.\n" );
+    	return -1;
+    }
+	ssize_t sent = send( receivingSocket.lock()->getFileDescriptor(), response.to_string().c_str(), response.to_string().length(), 0 );
 	if( sent < 0 ) {
 		printf( "\nCould not send data.\n" );
 		sendError();

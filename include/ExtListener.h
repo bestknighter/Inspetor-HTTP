@@ -22,7 +22,7 @@ public:
 
 	std::vector< Response > responsesReceived;
 private:
-	typedef std::tuple< std::shared_ptr< Socket >, std::weak_ptr< Socket > SocketPair; // Socket externo (meu); Socket interno (do IntListener)
+	typedef std::tuple< std::shared_ptr< Socket >, std::weak_ptr< Socket > > SocketPair; // Socket externo (meu); Socket interno (do IntListener)
 	int findSocketPair( std::weak_ptr< Socket > s_w_ptr );
 	int findSocketPair( std::shared_ptr< Socket > s_s_ptr );
 	void trimSockets();
