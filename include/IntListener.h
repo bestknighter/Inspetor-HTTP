@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <queue>
 #include <memory>
 
 #include <unistd.h>
@@ -13,15 +12,16 @@
 
 class IntListener {
 public:
+	typedef std::tuple< std::weak_ptr< Socket >, HTTP::Header > Request; // Socket que pediu; O que pediu
 	IntListener( int port );
 	~IntListener();
 	
 	void acceptConnections();
 	void receiveRequests();
 	void closeSocket( int fileDescriptor );
-	ssize_t sendResponse( int fileDescriptor, std::string message );
+	ssize_t sendResponse( std::weak_ptr< Socket > receivingSocket, std::string message );
 
-	std::queue< std::tuple< std::weak_ptr< Socket >, HTTP::Header > > requestsReceived; // Socket que pediu; O que pediu
+	std::vector< Request > requestsReceived;
 private:
 	Socket listeningSocket;
 	std::vector< std::shared_ptr< Socket > > connectedSockets;

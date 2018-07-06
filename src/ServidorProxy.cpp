@@ -1,43 +1,67 @@
 #include "ServidorProxy.h"
 
+#include <cstdio>
+#include <cstdlib>
+#include <memory>
+
 #include "Header.h"
 
-ServidorProxy::ServidorProxy( int port ) : il( port ), el( port ) {}
+ServidorProxy::ServidorProxy( int port ) : continueRunning(true), il( port ), el() {
+	requestsReceived = il.requestsReceived;
+	responsesReceived = el.responsesReceived;
+}
 
 ServidorProxy::~ServidorProxy() {}
 
 bool ServidorProxy::Loop() {
-	// Leaving machine first
-	il.AcceptAndReceive();
-	if(0 < (int) il.messagesReceived.size() ) printf( "\nThere are %d outbound packets.\n", (int) il.messagesReceived.size() );
-	for( int i = 0; i < (int) il.messagesReceived.size(); i++ ) {
-		HTTP::Header header( il.messagesReceived[i].message );
-		printf( "\nMessage from %s:%d to %s:%s\n%s\n"
-			, il.messagesReceived[i].addr_from.c_str()
-			, il.messagesReceived[i].port_from
-			, header.host.c_str()
-			, header.port.c_str()
-			, header.to_string( false ).c_str()
-		);
-		el.Send( il.messagesReceived[i].internalConnectionID, header.host.c_str(), std::atoi( header.port.c_str() ), il.messagesReceived[i].message );
-		// E se falhar a conexao?
-	}
-	il.messagesReceived.clear();
+	/**** Saindo da maquina ****/
+	il.acceptConnections();
+	il.receiveRequests();
 
-	// Arriving machine last
-	el.ReceiveMessages();
-	if(0 < (int) el.messagesReceived.size() ) printf( "\nThere are %d inbound packets.\n", (int) el.messagesReceived.size() );
-	for( int i = 0; i < (int) el.messagesReceived.size(); i++ ) {
-		HTTP::Header header( el.messagesReceived[i].message );
-		printf( "\nMessage from %s:%d to %s:%s\n%s\n"
-			, el.messagesReceived[i].addr_from.c_str()
-			, el.messagesReceived[i].port_from
-			, header.host.c_str()
-			, header.port.c_str()
-			, header.to_string( false ).c_str()
-		);
-		il.Send( el.messagesReceived[i].internalConnectionID, el.messagesReceived[i].message );
+	// Autoriza requests
+	// (quem deve fazer isso eh a UI, mas esta aqui como placeholder para testes)
+	if( requestsReceived.size() > 0 ) std::vector::swap( requestsReceived, requestsToSend );
+
+	// Envia requests
+	if( requestsToSend.size() > 0 ) {
+		#ifdef DEBUG
+		printf( "\nSending %u requests.\n", requestsToSend.size() );
+		#endif // DEBUG
+		for( auto it = requestsToSend.begin(); i != requestsToSend.end(); it++ ) {
+			#ifdef DEBUG
+			printf( "\nSending to %s:%s...\n%s\n\n", std::get<1>(it).host.c_str(), std::get<1>(it).port.c_str(), std::get<1>(it).to_string(false).c_str() );
+			#endif // DEBUG
+			if( -1 == el.sendRequest( std::get<0>(it), std::get<1>(it) ) ) {
+				fprintf( stderr, "\nCouldn't send data. Closing everything. Try again.\n" );
+				il.closeSocket( std::get<0>(it)->getFileDescriptor() ); // Ao fechar o socket interno, no proximo loop os externos tbm serao encerrados
+			}
+		}
+		requestsToSend.clear();
 	}
-	el.messagesReceived.clear();
-	return true;
+
+	/**** Chegando na maquina ****/
+	el.receiveResponses();
+
+	// Autoriza requests
+	// (quem deve fazer isso eh a UI, mas esta aqui como placeholder para testes)
+	if( responsesReceived.size() > 0 ) std::swap( responsesReceived, responsesToSend );
+
+	// Envia requests
+	if( responsesToSend.size() > 0 ) {
+		#ifdef DEBUG
+		printf( "\nSending %u responses.\n", responsesToSend.size() );
+		#endif // DEBUG
+		for( auto it = responsesToSend.begin(); i != responsesToSend.end(); it++ ) {
+			#ifdef DEBUG
+			printf( "\nSending to %s:%s...\n%s\n\n", std::get<1>(it).host.c_str(), std::get<1>(it).port.c_str(), std::get<1>(it).to_string(false).c_str() );
+			#endif // DEBUG
+			if( -1 == il.sendRequest( std::get<0>(it), std::get<1>(it) ) ) {
+				fprintf( stderr, "\nCouldn't send data. Closing everything. Try again.\n" );
+				il.closeSocket( std::get<0>(it)->getFileDescriptor() ); // Ao fechar o socket interno, no proximo loop os externos tbm serao encerrados
+			}
+		}
+		responsesToSend.clear();
+	}
+
+	return continueRunning;
 }

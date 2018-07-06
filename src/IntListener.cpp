@@ -43,7 +43,7 @@ void IntListener::acceptConnections() {
 void IntListener::receiveRequests() {
 	// Lista de pollfds representa cada socket que pode ter atualizacao
 	struct pollfd **fds = (struct pollfd**) malloc( sizeof(struct pollfd*)*connectedSockets.size() );
-	for( int i = 0; i < connectedSockets.size(); i++ ) {
+	for( long int i = 0; i < (long int) connectedSockets.size(); i++ ) {
 		fds[i] = new struct pollfd( connectedSockets[i]->getFileDescriptor(), POLLIN | POLLPRI, 0 );
 	}
 
@@ -52,7 +52,7 @@ void IntListener::receiveRequests() {
 		fprintf( stderr, "\nError when polling connectedSockets.\n" );
 		pollError();
 	} else if( n > 0 ) { // n positivo significa que tem n sockets com dados prontos para serem lidos
-		for( int i = connectedSockets.size() - 1; i <= 0; i-- ) {
+		for( long int i = (long int) connectedSockets.size() - 1; i >= 0; i-- ) {
 			if( (POLLIN | POLLPRI) & fds[i].revents ) { // So pra ter certeza que sao os eventos que quero
 				int valread = 0;
 				std::string message("");
@@ -74,14 +74,14 @@ void IntListener::receiveRequests() {
 	}
 
 	// Desaloca lista de pollfds
-	for( int i = 0; i < connectedSockets.size(); i++ ) {
+	for( long int i = 0; i < (long int) connectedSockets.size(); i++ ) {
 		delete fds[i];
 	}
 	free(fds);
 }
 
 void IntListener::closeSocket( int fileDescriptor ) {
-	for( int i = 0; i < connectedSockets.size(); i++ ) {
+	for( long int i = 0; i < (long int) connectedSockets.size(); i++ ) {
 		if( connectedSockets[i]->getFileDescriptor() == fileDescriptor ) {
 			connectedSockets.erase( connectedSockets.begin() + i );
 			return;
@@ -89,8 +89,8 @@ void IntListener::closeSocket( int fileDescriptor ) {
 	}
 }
 
-ssize_t IntListener::sendResponse( int fileDescriptor, std::string message ) {
-	ssize_t sent = send( fileDescriptor, message.c_str(), message.length(), 0 );
+ssize_t IntListener::sendResponse( std::weak_ptr< Socket > receivingSocket, std::string message ) {
+	ssize_t sent = send( receivingSocket->getFileDescriptor(), message.c_str(), message.length(), 0 );
 	if( sent < 0 ) {
 		printf( "\nCould not send data.\n" );
 		sendError();

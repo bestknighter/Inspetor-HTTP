@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <queue>
 #include <memory>
 
 #include <unistd.h>
@@ -13,6 +12,7 @@
 
 class ExtListener {
 public:
+	typedef std::tuple< std::weak_ptr< Socket >, HTTP::Header > Response; // Socket que deve receber; O que deve receber
 	ExtListener( int port );
 	ExtListener();
 	~ExtListener();
@@ -20,13 +20,14 @@ public:
 	ssize_t sendRequest( std::weak_ptr< Socket > requestingSocket, HTTP::Header request );
 	void receiveResponses();
 
-	std::queue< std::tuple< std::weak_ptr< Socket >, HTTP::Header > > responsesReceived; // Socket que deve receber; O que deve receber
+	std::vector< Response > responsesReceived;
 private:
+	typedef std::tuple< std::shared_ptr< Socket >, std::weak_ptr< Socket > SocketPair; // Socket externo (meu); Socket interno (do IntListener)
 	int findSocketPair( std::weak_ptr< Socket > s_w_ptr );
 	int findSocketPair( std::shared_ptr< Socket > s_s_ptr );
 	void trimSockets();
 
-	std::vector< std::tuple< std::shared_ptr< Socket >, std::weak_ptr< Socket > > createdSockets; // Socket externo; Socket interno
+	std::vector< SocketPair > createdSockets;
 };
 
 #endif // EXTLISTENER_H

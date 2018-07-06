@@ -21,7 +21,7 @@ ExtListener::~ExtListener() {
 }
 
 ssize_t ExtListener::sendRequest( std::weak_ptr< Socket > requestingSocket, HTTP::Header request ) {
-	std::tuple< std::shared_ptr< Socket >, std::weak_ptr< Socket > socketPair;
+	SocketPair socketPair;
 	int n = findSocketPair(requestingSocket);
 	if( -1 == n ) { // Nao encontrou um par
 		Socket* s = new Socket();
@@ -49,7 +49,7 @@ void ExtListener::receiveResponses() {
 	trimSockets();
 	// Lista de pollfds representa cada socket que pode ter atualizacao
 	struct pollfd **fds = (struct pollfd**) malloc( sizeof(struct pollfd*)*createdSockets.size() );
-	for( int i = 0; i < createdSockets.size(); i++ ) {
+	for( long int i = 0; i < (long int) createdSockets.size(); i++ ) {
 		fds[i] = new struct pollfd( std::get<0>(createdSockets[i])->getFileDescriptor(), POLLIN | POLLPRI, 0 );
 	}
 
@@ -58,7 +58,7 @@ void ExtListener::receiveResponses() {
 		fprintf( stderr, "\nError when polling createdSockets.\n" );
 		pollError();
 	} else if( n > 0 ) { // n positivo significa que tem n sockets com dados prontos para serem lidos
-		for( int i = createdSockets.size() - 1; i <= 0; i-- ) {
+		for( long int i = (long int) createdSockets.size() - 1; i >= 0; i-- ) {
 			if( (POLLIN | POLLPRI) & fds[i].revents ) { // So pra ter certeza que sao os eventos que quero
 				int valread = 0;
 				std::string message("");
@@ -81,7 +81,7 @@ void ExtListener::receiveResponses() {
 	}
 
 	// Desaloca lista de pollfds
-	for( int i = 0; i < connectedSockets.size(); i++ ) {
+	for( long int i = 0; i < (long int) connectedSockets.size(); i++ ) {
 		delete fds[i];
 	}
 	free(fds);
@@ -90,7 +90,7 @@ void ExtListener::receiveResponses() {
 int ExtListener::findSocketPair( std::weak_ptr< Socket > s_w_ptr ) {
 	trimSockets();
 	if( s_w_ptr.expired() ) return -1; // Pra que testar se ja expirou?
-	for( int i = 0; i < createdSockets.size(); i++ ) {
+	for( long int i = 0; i < (long int) createdSockets.size(); i++ ) {
 		if( std::get<1>( createdSockets[i] ) == s_w_ptr ) { // Sao identicos
 			return i;
 		} else {
@@ -109,7 +109,7 @@ int ExtListener::findSocketPair( std::weak_ptr< Socket > s_w_ptr ) {
 int ExtListener::findSocketPair( std::shared_ptr< Socket > s_s_ptr ) {
 	trimSockets();
 	if( s_s_ptr.get() == nullptr ) return -1; // Pra que testar se ja expirou?
-	for( int i = 0; i < createdSockets.size(); i++ ) {
+	for( long int i = 0; i < (long int) createdSockets.size(); i++ ) {
 		if( std::get<0>( createdSockets[i] ) == s_s_ptr ) { // Sao identicos
 			return i;
 		} else {
@@ -130,7 +130,7 @@ int ExtListener::findSocketPair( std::shared_ptr< Socket > s_s_ptr ) {
 }
 
 void ExtListener::trimSockets() { // Exclui pares cujo o socket interno foi excluido
-	for( int i = createdSockets.size() - 1; i <= 0 ; i-- ) {
+	for( long int i = (long int) createdSockets.size() - 1; i >= 0 ; i-- ) {
 		std::weak_ptr< Socket > s_w_ptr = std::get<1>(createdSockets[i]);
 		if( s_w_ptr.expired() ) createdSockets.erase( createdSockets.begin() + i );
 	}

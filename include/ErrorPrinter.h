@@ -10,7 +10,6 @@ int acceptError();
 int readError();
 int sendError();
 int closeError();
-int printError();
 int getsocknameError();
 int pollError();
 

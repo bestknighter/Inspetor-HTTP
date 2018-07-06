@@ -447,3 +447,59 @@ int closeError() {
 	errno = 0;
 	return ret;
 }
+
+int getsocknameError() {
+	switch( errno ) {
+		/* Linux error codes */
+		case EBADF:
+			printf( "\nEBADF: The socket argument isn't a valid open file descriptor.\n" );
+			break;
+		case EFAULT:
+			printf( "\nEFAULT: The addr argument points to memory not in a valid part of the process address space.\n" );
+			break;
+		case EINVAL:
+			printf( "\nEINVAL: addrlen is invalid (e.g., is negative); Or, The socket has been shut down.\n" );
+			break;
+		case ENOBUFS:
+			printf( "\nENOBUFS: Insufficient resources were available in the system to perform the operation.\n" );
+			break;
+		case ENOTSOCK:
+			printf( "\nENOTSOCK: The socket argument does not refer to a socket.\n" );
+			break;
+		case EOPNOTSUPP:
+			printf( "\nEOPNOTSUPP: The operation is not supported for this socket's protocol.\n" );
+			break;
+		/* Other */
+		default:
+			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
+			break;
+	}
+	int ret = errno;
+	errno = 0;
+	return ret;
+}
+
+int pollError() {
+	switch( errno ) {
+		/* Linux error codes */
+		case EFAULT:
+			printf( "\nEFAULT: The array given as argument was not contained in the calling program's address space.\n" );
+			break;
+		case EINTR:
+			printf( "\nEINTR: A signal was caught during poll().\n" );
+			break;
+		case EINVAL:
+			printf( "\nEINVAL: The nfds value exceeds the RLIMIT_NOFILE value; Or, The nfds argument is greater than {OPEN_MAX}, or one of the fd members refers to a STREAM or multiplexer that is linked (directly or indirectly) downstream from a multiplexer.\n" );
+			break;
+		case ENOMEM:
+			printf( "\nENOMEM: There was no space to allocate file descriptor tables.\n" );
+			break;
+		/* Other */
+		default:
+			printf( "\nOTHER( %d ): Unknown error code.\n", errno );
+			break;
+	}
+	int ret = errno;
+	errno = 0;
+	return ret;
+}
