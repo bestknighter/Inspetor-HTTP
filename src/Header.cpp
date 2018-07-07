@@ -2,7 +2,7 @@
 
 namespace HTTP {
 
-Header::Header( std::string& str ) {
+Header::Header( std::string& str ) : firstLine(), body(), host(), port() {
 	if( !str.empty() ) {
 		unsigned int first = 0;
 		unsigned int last = str.find( "\r\n" );

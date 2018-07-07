@@ -94,21 +94,21 @@ bool Socket::listenTo( std::string name, std::string port, int queueSize, int so
 			fileDescriptor = socket(addr_p->ai_family, addr_p->ai_socktype, addr_p->ai_protocol);
 			if( -1 == fileDescriptor ) {
 				#ifdef DEBUG
-				fprintf( stderr, "\nFailed creating socket. Trying another address...\n" );
+				fprintf( stderr, "\nFailed creating socket. Trying another address..." );
 				socketError();
 				#endif // DEBUG
 				continue;
 			}
 			if( -1 == bind( fileDescriptor, addr_p->ai_addr, addr_p->ai_addrlen ) ) {
 				#ifdef DEBUG
-				fprintf( stderr, "\nFailed binding socket. Trying another address...\n" );
+				fprintf( stderr, "\nFailed binding socket. Trying another address..." );
 				bindError();
 				#endif // DEBUG
 				close( fileDescriptor );
 				continue;
 			}
 			if( -1 == listen( fileDescriptor, queueSize ) ) {
-				fprintf( stderr, "\nFailed to start listening socket. Trying another address...\n" );
+				fprintf( stderr, "\nFailed to start listening socket. Trying another address..." );
 				listenError();
 				close( fileDescriptor );
 			} else {

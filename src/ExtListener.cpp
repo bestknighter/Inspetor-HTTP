@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <cstring>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -11,6 +12,7 @@
 #include "ErrorPrinter.h"
 
 #define EXTLISTENER_BUFFER_SIZE 1024
+#define EXTLISTENER_WAITTIME 25
 
 ExtListener::ExtListener() {}
 
@@ -39,56 +41,66 @@ ssize_t ExtListener::sendRequest( std::weak_ptr< Socket > requestingSocket, HTTP
 	// So chega nessa parte se tiver um par, seja criado ou encontrado
 	ssize_t sent = send( std::get<0>(socketPair)->getFileDescriptor(), request.to_string().c_str(), request.to_string().length(), 0 );
 	if( sent < 0 ) {
-		printf( "\nCould not send data.\n" );
+		printf( "\nCould not send data." );
 		sendError();
 	}
 	return sent;
 }
 
-void ExtListener::receiveResponses() {
+bool ExtListener::receiveResponses() {
 	trimSockets();
+	if( createdSockets.size() <= 0 ) return true;
+	
+	bool retValue = true;
+	
 	// Lista de pollfds representa cada socket que pode ter atualizacao
-	struct pollfd **fds = (struct pollfd**) malloc( sizeof(struct pollfd*)*createdSockets.size() );
+	struct pollfd* fds = new struct pollfd[createdSockets.size()];
 	for( long int i = 0; i < (long int) createdSockets.size(); i++ ) {
-		struct pollfd *fd = new struct pollfd();
-		fd->fd = std::get<0>(createdSockets[i])->getFileDescriptor();
-		fd->events = POLLIN | POLLPRI;
-		fd->revents = 0;
-		fds[i] = fd;
+		fds[i].fd = std::get<0>(createdSockets[i])->getFileDescriptor();
+		fds[i].events = POLLIN | POLLPRI;
+		fds[i].revents = 0;
 	}
 
-	int n = poll( *fds, createdSockets.size(), 0 ); // Verifica se tem algun socket criado que tem coisa para ser lida agora
-	if( n < 0 ) { // n negativo significa erro
-		fprintf( stderr, "\nError when polling createdSockets.\n" );
-		pollError();
-	} else if( n > 0 ) { // n positivo significa que tem n sockets com dados prontos para serem lidos
-		for( long int i = (long int) createdSockets.size() - 1; i >= 0; i-- ) {
-			if( (POLLIN | POLLPRI) & fds[i]->revents ) { // So pra ter certeza que sao os eventos que quero
-				int valread = 0;
-				std::string message("");
-				do {
-					char buffer[EXTLISTENER_BUFFER_SIZE];
-					valread = read( std::get<0>(createdSockets[i])->getFileDescriptor(), buffer, sizeof( buffer ) );
-					message += std::string( buffer, valread );
-				} while (EXTLISTENER_BUFFER_SIZE == valread);
-				if( valread < 0 ) { // Erro ao ler socket
-					fprintf( stderr, "\nCould not read data.\n" );
-					readError();
-				} else if( valread == 0 ) { // Fechar socket
-					// Precisa notificar IntListener que socket externo foi fechado? Acho que nao
-					createdSockets.erase( createdSockets.begin() + i );
-				} else { // Registra mensagem recebida
-					responsesReceived.push_back( std::make_tuple( std::get<1>(createdSockets[i]), HTTP::Header(message) ) );
-				}
+	for( long int i = (long int) createdSockets.size() - 1; i >= 0; i-- ) {
+		int pollRet = poll( fds+i, 1, 0 );
+		if( pollRet > 0 && (POLLIN | POLLPRI) & fds[i].revents ) {
+			int valread = 0;
+			std::string message("");
+	    	do {
+	    		char buffer[EXTLISTENER_BUFFER_SIZE] = {0};
+				valread = read( std::get<0>(createdSockets[i])->getFileDescriptor(), buffer, sizeof( buffer ) );
+				if( 0 == valread ) break;
+				message += std::string( buffer, valread );
+				
+				int aux = errno;
+				pollRet = poll( fds+i, 1, EXTLISTENER_WAITTIME );
+				if( pollRet < 0 ) {
+					fprintf( stderr, "\nError when polling external socket %ld.", i );
+					pollError();
+					retValue = false;
+	    		}
+	    		errno = aux;
+	    	} while( pollRet > 0 && (POLLIN | POLLPRI) & fds[i].revents );
+			if( valread < 0 ) { // Erro ao ler socket
+				fprintf( stderr, "\nCould not read data." );
+				readError();
+				retValue = false;
+			} else if( 0 == valread ) { // Fechar socket
+				// Precisa notificar IntListener que socket externo foi fechado? Acho que nao
+				createdSockets.erase( createdSockets.begin() + i );
+			} else { // Registra mensagem recebida
+				responsesReceived.push_back( std::make_tuple( std::get<1>(createdSockets[i]), HTTP::Header(message) ) );
 			}
-		}
+	    } else if( pollRet < 0 ) {
+			fprintf( stderr, "\nError when polling external socket %ld.", i );
+			pollError();
+			retValue = false;
+	    }
 	}
 
 	// Desaloca lista de pollfds
-	for( long int i = 0; i < (long int) createdSockets.size(); i++ ) {
-		delete fds[i];
-	}
-	free(fds);
+	delete[] fds;
+	return retValue;
 }
 
 int ExtListener::findSocketPair( std::weak_ptr< Socket > s_w_ptr ) {

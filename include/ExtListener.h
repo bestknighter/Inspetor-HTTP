@@ -18,7 +18,7 @@ public:
 	~ExtListener();
 
 	ssize_t sendRequest( std::weak_ptr< Socket > requestingSocket, HTTP::Header request );
-	void receiveResponses();
+	bool receiveResponses();
 
 	std::vector< Response > responsesReceived;
 private:

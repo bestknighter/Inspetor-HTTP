@@ -16,8 +16,8 @@ public:
 	IntListener( int port );
 	~IntListener();
 	
-	void acceptConnections();
-	void receiveRequests();
+	bool acceptConnections();
+	bool receiveRequests();
 	void closeSocket( int fileDescriptor );
 	ssize_t sendResponse( std::weak_ptr< Socket > receivingSocket, HTTP::Header response );
 

@@ -15,8 +15,8 @@ ServidorProxy::~ServidorProxy() {}
 
 bool ServidorProxy::Loop() {
 	/**** Saindo da maquina ****/
-	il.acceptConnections();
-	il.receiveRequests();
+	continueRunning &= il.acceptConnections();
+	continueRunning &= il.receiveRequests();
 
 	// Autoriza requests
 	// (quem deve fazer isso eh a UI, mas esta aqui como placeholder para testes)
@@ -40,7 +40,7 @@ bool ServidorProxy::Loop() {
 	}
 
 	/**** Chegando na maquina ****/
-	el.receiveResponses();
+	continueRunning &= el.receiveResponses();
 
 	// Autoriza requests
 	// (quem deve fazer isso eh a UI, mas esta aqui como placeholder para testes)
@@ -53,7 +53,7 @@ bool ServidorProxy::Loop() {
 		#endif // DEBUG
 		for( auto it = responsesToSend.begin(); it != responsesToSend.end(); it++ ) {
 			#ifdef DEBUG
-			printf( "\nSending to %s:%s...\n%s\n\n", std::get<1>(*it).host.c_str(), std::get<1>(*it).port.c_str(), std::get<1>(*it).to_string(false).c_str() );
+			printf( "\nSending...\n%s\n\n", std::get<1>(*it).to_string(false).c_str() );
 			#endif // DEBUG
 			if( -1 == il.sendResponse( std::get<0>(*it), std::get<1>(*it) ) ) {
 				fprintf( stderr, "\nCouldn't send data. Closing everything. Try again.\n" );
