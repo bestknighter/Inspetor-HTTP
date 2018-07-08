@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <poll.h>
 
+#include "ErrorPrinter.h"
+
 #define SPIDER_BUFFER 1024
 #define SPIDER_WAITTIME 250
 
@@ -21,7 +23,7 @@ Spider::Spider( std::string host ) : success(false), treeRootName(host) {
 	fd.events = POLLIN | POLLPRI;
 	fd.revents = 0;
 	while( !resourcesToDownload.empty() ) {
-		if( findResources( resourcesToDownload.front() ) == -1 ) {
+		if( findResource( resourcesToDownload.front() ) == -1 ) {
 			std::string request( "GET http://" );
 			request += resourcesToDownload.front();
 			request += " HTTP/1.1\r\nHost: " + host + "\r\nConnection: keep-alive\r\n\r\n";
@@ -35,7 +37,7 @@ Spider::Spider( std::string host ) : success(false), treeRootName(host) {
 
 			// Recebe recurso
 			fd.fd = socket.getFileDescriptor(); // Servidor pode ter me feito reabrir um socket
-			int pollRet = poll( &fd, 1, 0 );
+			int pollRet = poll( &fd, 1, SPIDER_WAITTIME*40 );
 			if( pollRet > 0 && (POLLIN | POLLPRI) & fd.revents ) {
 				int valread = 0;
 				std::string message("");
@@ -83,7 +85,7 @@ bool Spider::isValid() {
 }
 
 long long int Spider::findResource( std::string resourceName ) {
-	for( int i = 0; i < tree.size(); i++ ) {
+	for( unsigned long int i = 0; i < tree.size(); i++ ) {
 		if( tree[i].getName() == resourceName ) return i;
 	}
 	return -1;
