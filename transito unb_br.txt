@@ -1,0 +1,1136 @@
+Sending 1 requests.
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/ HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cookie: _ga=GA1.2.1869444172.1530930546
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:56 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 12835
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+Set-Cookie: 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87; path=/; HttpOnly
+Expires: Wed, 17 Aug 2005 00:00:00 GMT
+Last-Modified: Sun, 08 Jul 2018 20:09:56 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+Vary: Accept-Encoding
+Content-Encoding: gzip
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to fonts.googleapis.com:80...
+GET http://fonts.googleapis.com/css?family=liberation_sansregular HTTP/1.1
+Host: fonts.googleapis.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/css,*/*;q=0.1
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Connection: keep-alive
+
+<body>
+
+
+Sending 2 requests.
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/templates/unb/css/custom.css HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/css,*/*;q=0.1
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 21 Jun 2018 14:41:58 GMT
+If-None-Match: "15edd-56f27ead83980-gzip"
+
+<body>
+
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/templates/unb/css/template.css HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/css,*/*;q=0.1
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/media/jui/js/jquery.min.js?6cfc87c1c74f93ce59cdc1e62ac277ab HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 28 Jun 2018 10:27:38 GMT
+If-None-Match: "17b8b-56fb12e2f1fac-gzip"
+
+<body>
+
+
+Sending 2 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Content-Type: text/css
+Content-Length: 14938
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+Last-Modified: Thu, 21 Jun 2018 14:41:58 GMT
+ETag: "15edd-56f27ead83980-gzip"
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Encoding: gzip
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending...
+HTTP/1.1 404 Not Found
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Vary: Accept-Encoding
+Set-Cookie: 3baea3d0a9ea5c914056701c63d37ff8=dumlt2vvuim9n64hcfr87vvd02; path=/; HttpOnly
+Cache-Control: no-cache
+Pragma: no-cache
+Content-Encoding: gzip
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/media/jui/js/jquery-noconflict.js?6cfc87c1c74f93ce59cdc1e62ac277ab HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 28 Jun 2018 10:27:38 GMT
+If-None-Match: W/"15-56fb12e2ee12b"
+
+<body>
+
+
+Sending 2 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Content-Type: application/javascript
+Content-Length: 33760
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+Last-Modified: Thu, 28 Jun 2018 10:27:38 GMT
+ETag: "17b8b-56fb12e2f1fac-gzip"
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Encoding: gzip
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Content-Type: text/css
+Content-Length: 25619
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+Last-Modified: Fri, 15 Jun 2018 14:33:04 GMT
+ETag: "27e3f-56eaf17f7c800-gzip"
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Encoding: gzip
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/media/jui/js/jquery-migrate.min.js?6cfc87c1c74f93ce59cdc1e62ac277ab HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 28 Jun 2018 10:27:38 GMT
+If-None-Match: "2748-56fb12e2f006c-gzip"
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 304 Not Modified
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Connection: keep-alive
+ETag: "15-56fb12e2ee12b"
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/media/system/js/caption.js?6cfc87c1c74f93ce59cdc1e62ac277ab HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 28 Jun 2018 10:27:38 GMT
+If-None-Match: "1eb-56fb12e314290-gzip"
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Content-Type: application/javascript
+Content-Length: 4014
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+Last-Modified: Thu, 28 Jun 2018 10:27:38 GMT
+ETag: "2748-56fb12e2f006c-gzip"
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Encoding: gzip
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/media/jui/js/bootstrap.min.js?6cfc87c1c74f93ce59cdc1e62ac277ab HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 28 Jun 2018 10:27:38 GMT
+If-None-Match: "71e4-56fb12e2f100c-gzip"
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Content-Type: application/javascript
+Content-Length: 336
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+Last-Modified: Thu, 28 Jun 2018 10:27:38 GMT
+ETag: "1eb-56fb12e314290-gzip"
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Encoding: gzip
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/media/system/js/core.js?6cfc87c1c74f93ce59cdc1e62ac277ab HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 28 Jun 2018 10:27:38 GMT
+If-None-Match: "1e12-56fb12e312350-gzip"
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Content-Type: application/javascript
+Content-Length: 7701
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+Last-Modified: Thu, 28 Jun 2018 10:27:38 GMT
+ETag: "71e4-56fb12e2f100c-gzip"
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Encoding: gzip
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to ocsp.pki.goog:80...
+POST http://ocsp.pki.goog/GTSGIAG3 HTTP/1.1
+Host: ocsp.pki.goog
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Length: 75
+Content-Type: application/ocsp-request
+Connection: keep-alive
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Content-Type: application/javascript
+Content-Length: 3118
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+Last-Modified: Thu, 28 Jun 2018 10:27:38 GMT
+ETag: "1e12-56fb12e312350-gzip"
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Encoding: gzip
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 8 requests.
+
+Sending to detectportal.firefox.com:80...
+GET http://detectportal.firefox.com/success.txt HTTP/1.1
+Host: detectportal.firefox.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Pragma: no-cache
+Connection: keep-alive
+
+<body>
+
+
+Sending to fonts.googleapis.com:80...
+GET http://fonts.googleapis.com/css?family=liberation_sansregular HTTP/1.1
+Host: fonts.googleapis.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/css,*/*;q=0.1
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: 3baea3d0a9ea5c914056701c63d37ff8=dumlt2vvuim9n64hcfr87vvd02
+Connection: keep-alive
+
+<body>
+
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/images/Noticias/2018/DestaquesSlide/05072018_SIG_UnB.JPG HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 05 Jul 2018 20:13:22 GMT
+If-None-Match: "6701-570462dd2e665"
+
+<body>
+
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/images/Noticias/2018/DestaquesSlide/14062018_CDT_Fachada_BetoMonteiro-18.jpg HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 05 Jul 2018 20:19:17 GMT
+If-None-Match: "15718-57046430507c7"
+
+<body>
+
+
+Sending to noticias.unb.br:80...
+GET http://noticias.unb.br/images/Noticias/2018/06-Jun/04_AvaliaaoPosGraduaao_RaquelAviani_29062018.jpg HTTP/1.1
+Host: noticias.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546
+Connection: keep-alive
+If-Modified-Since: Tue, 03 Jul 2018 16:35:43 GMT
+If-None-Match: "172e0-5701ae7bf44ed"
+
+<body>
+
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/images/Noticias/2018/BannerTopDestaques/20062017_NairSuicidio2_JulioMinasi174.jpg HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 05 Jul 2018 19:56:37 GMT
+If-None-Match: "76016-57045f1f23cfb"
+
+<body>
+
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/images/Noticias/2018/BannerTopDestaques/plano_inter_940-02_1.jpg HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Fri, 22 Jun 2018 09:45:22 GMT
+If-None-Match: "d965f-56f37e3f63080"
+
+<body>
+
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/images/Noticias/2018/BannerTopDestaques/14062018_CDT_Fachada_BetoMonteiro-82-940x500px-01.jpg HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 05 Jul 2018 20:00:34 GMT
+If-None-Match: "6c409-570460010ee8a"
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Content-Type: application/ocsp-response
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Cache-Control: public, max-age=86400
+Server: ocsp_responder
+Content-Length: 463
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Content-Length: 8
+Last-Modified: Mon, 15 May 2017 18:04:40 GMT
+ETag: "ae780585f49b94ce1444eb7d28906123"
+Accept-Ranges: bytes
+Server: AmazonS3
+X-Amz-Cf-Id: e_DBHwIJfxpzrr7oOkrP16NwUo25y9-SmITdhO_qsAFun77w9dWDsQ==
+Cache-Control: no-cache, no-store, must-revalidate
+Date: Sun, 08 Jul 2018 20:09:57 GMT
+Connection: keep-alive
+
+<body>
+
+
+Sending 5 responses.
+
+Sending...
+HTTP/1.1 304 Not Modified
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Connection: keep-alive
+ETag: "15718-57046430507c7"
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending...
+HTTP/1.1 304 Not Modified
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Connection: keep-alive
+ETag: "172e0-5701ae7bf44ed"
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending...
+HTTP/1.1 304 Not Modified
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Connection: keep-alive
+ETag: "76016-57045f1f23cfb"
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending...
+HTTP/1.1 304 Not Modified
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Connection: keep-alive
+ETag: "6c409-570460010ee8a"
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending...
+HTTP/1.1 304 Not Modified
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Connection: keep-alive
+ETag: "d965f-56f37e3f63080"
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 2 responses.
+
+Sending...
+HTTP/1.1 404 Not Found
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Vary: Accept-Encoding
+Cache-Control: no-cache
+Pragma: no-cache
+Content-Encoding: gzip
+
+<body>
+
+
+Sending...
+HTTP/1.1 304 Not Modified
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Connection: keep-alive
+ETag: "6701-570462dd2e665"
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 2 requests.
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/images/Noticias/2018/DestaquesSlide/15062018_OTempoDeNossasVidas_CaioSato_8.JPG HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Thu, 05 Jul 2018 20:22:20 GMT
+If-None-Match: "4a322-570464dea73c3"
+
+<body>
+
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/images/Noticias/2018/DestaquesSlide/13jun2016_climaprecopa_andregomes-6.JPG HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+If-Modified-Since: Mon, 25 Jun 2018 19:01:37 GMT
+If-None-Match: "14d86-56f7c02cb91f7"
+
+<body>
+
+
+Sending 2 responses.
+
+Sending...
+HTTP/1.1 304 Not Modified
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Connection: keep-alive
+ETag: "4a322-570464dea73c3"
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending...
+HTTP/1.1 304 Not Modified
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Connection: keep-alive
+ETag: "14d86-56f7c02cb91f7"
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to detectportal.firefox.com:80...
+GET http://detectportal.firefox.com/success.txt HTTP/1.1
+Host: detectportal.firefox.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Pragma: no-cache
+Connection: keep-alive
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 404 Not Found
+Content-Type: text/html; charset=UTF-8
+Referrer-Policy: no-referrer
+Content-Length: 1572
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to detectportal.firefox.com:80...
+GET http://detectportal.firefox.com/success.txt HTTP/1.1
+Host: detectportal.firefox.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Pragma: no-cache
+Connection: keep-alive
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 404 Not Found
+Content-Type: text/html; charset=UTF-8
+Referrer-Policy: no-referrer
+Content-Length: 1572
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+
+<body>
+
+
+Sending 3 requests.
+
+Sending to detectportal.firefox.com:80...
+GET http://detectportal.firefox.com/success.txt HTTP/1.1
+Host: detectportal.firefox.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Pragma: no-cache
+Connection: keep-alive
+
+<body>
+
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/templates/unb/favicon.ico HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+
+<body>
+
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/components/com_extrawatch/js/agent.js?env=ExtraWatchJoomlaEnv&rand=0.16396788981511956 HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to barra.brasil.gov.br:80...
+GET http://barra.brasil.gov.br/static/opensans-bold.woff HTTP/1.1
+Host: barra.brasil.gov.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: application/font-woff2;q=1.0,application/font-woff;q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: identity
+Referer: http://www.unb.br/
+Origin: http://www.unb.br
+Connection: keep-alive
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 404 Not Found
+Content-Type: text/html; charset=UTF-8
+Referrer-Policy: no-referrer
+Content-Length: 1572
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+
+<body>
+
+
+Sending 2 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Content-Type: image/vnd.microsoft.icon
+Content-Length: 1150
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+Last-Modified: Fri, 15 Jun 2018 14:33:04 GMT
+ETag: "47e-56eaf17f7c800"
+Accept-Ranges: bytes
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+Content-Type: application/javascript
+Content-Length: 683
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+Last-Modified: Fri, 15 Jun 2018 14:33:02 GMT
+ETag: "7fd-56eaf17d94380-gzip"
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Encoding: gzip
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Robots-Tag: noindex
+Cache-Control: max-age=290304000, public
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 2 requests.
+
+Sending to ocsp.pki.goog:80...
+POST http://ocsp.pki.goog/GTSGIAG3 HTTP/1.1
+Host: ocsp.pki.goog
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Length: 75
+Content-Type: application/ocsp-request
+Connection: keep-alive
+
+<body>
+
+
+Sending to detectportal.firefox.com:80...
+GET http://detectportal.firefox.com/success.txt HTTP/1.1
+Host: detectportal.firefox.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Pragma: no-cache
+Connection: keep-alive
+
+<body>
+
+
+Sending 2 requests.
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/?option=com_ajax&module=extrawatch_agent&format=raw&origin=frontend&ewToken=8d7e6098a775cff98fe086f837b57da86898797f&task=ajax&action=img&rand=0.9018110434654599&env=ExtraWatchJoomlaEnv&ref=&title=UnB%20-%20Universidade%20de%20Bras%C3%ADlia%20-%20In%C3%ADcio&uri=_SLASH_&referringQuery=&getParams= HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+
+<body>
+
+
+Sending to www.unb.br:80...
+GET http://www.unb.br/?option=com_ajax&module=extrawatch_agent&format=raw&origin=frontend&ewToken=8d7e6098a775cff98fe086f837b57da86898797f&task=ajax&action=heatmap.include.js&env=ExtraWatchJoomlaEnv&amp;id=0&amp;extraWatchHeatmap=&amp;extraWatchDay=&amp;params=getParams%3D&title=UnB%20-%20Universidade%20de%20Bras%C3%ADlia%20-%20In%C3%ADcio&uri=/ HTTP/1.1
+Host: www.unb.br
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://www.unb.br/
+Cookie: _ga=GA1.2.1869444172.1530930546; 3ec986f4f850e1d0bdcd00fd24b0c473=dlvavb3rn2difprkditj9i9i87
+Connection: keep-alive
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 404 Not Found
+Content-Type: text/html; charset=UTF-8
+Referrer-Policy: no-referrer
+Content-Length: 1572
+Date: Sun, 08 Jul 2018 20:09:58 GMT
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to detectportal.firefox.com:80...
+GET http://detectportal.firefox.com/success.txt HTTP/1.1
+Host: detectportal.firefox.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Pragma: no-cache
+Connection: keep-alive
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 404 Not Found
+Content-Type: text/html; charset=UTF-8
+Referrer-Policy: no-referrer
+Content-Length: 1572
+Date: Sun, 08 Jul 2018 20:09:59 GMT
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Content-Type: application/ocsp-response
+Date: Sun, 08 Jul 2018 20:09:59 GMT
+Cache-Control: public, max-age=86400
+Server: ocsp_responder
+Content-Length: 463
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to detectportal.firefox.com:80...
+GET http://detectportal.firefox.com/success.txt HTTP/1.1
+Host: detectportal.firefox.com
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Pragma: no-cache
+Connection: keep-alive
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:59 GMT
+Content-Type: text/html; charset=UTF-8
+Content-Length: 0
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 404 Not Found
+Content-Type: text/html; charset=UTF-8
+Referrer-Policy: no-referrer
+Content-Length: 1572
+Date: Sun, 08 Jul 2018 20:09:59 GMT
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Server: nginx
+Date: Sun, 08 Jul 2018 20:09:59 GMT
+Content-Type: text/html; charset=UTF-8
+Content-Length: 0
+Connection: keep-alive
+Referrer-Policy: origin
+Upgrade-Insecure-Requests: 0
+X-Robots-Tag: noindex, nofollow
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+<body>
+
+
+Sending 1 requests.
+
+Sending to ocsp.pki.goog:80...
+POST http://ocsp.pki.goog/GTSGIAG3 HTTP/1.1
+Host: ocsp.pki.goog
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Length: 75
+Content-Type: application/ocsp-request
+Connection: keep-alive
+
+<body>
+
+
+Sending 1 responses.
+
+Sending...
+HTTP/1.1 200 OK
+Content-Type: application/ocsp-response
+Date: Sun, 08 Jul 2018 20:09:59 GMT
+Cache-Control: public, max-age=86400
+Server: ocsp_responder
+Content-Length: 463
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+
+<body>
