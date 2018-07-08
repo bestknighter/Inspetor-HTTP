@@ -10,6 +10,8 @@
 #include "Socket.h"
 #include "Header.h"
 
+namespace Inspector {
+
 class IntListener {
 public:
 	typedef std::tuple< std::weak_ptr< Socket >, HTTP::Header > Request; // Socket que pediu; O que pediu
@@ -25,6 +27,8 @@ public:
 private:
 	Socket listeningSocket;
 	std::vector< std::shared_ptr< Socket > > connectedSockets;
+
+};
 
 };
 

@@ -44,5 +44,6 @@
 		"unordered_map": "cpp",
 		"xfunctional": "cpp",
 		"xhash": "cpp"
-	}
+	},
+	"C_Cpp.intelliSenseEngineFallback": "Enabled"
 }

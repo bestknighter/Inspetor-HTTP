@@ -29,7 +29,7 @@ int main( int argc, char* argv[] ) {
 
 	printf( "\nStarting aracne with port# %d\n", port );
 
-	ServidorProxy s( port );
+	Inspector::ServidorProxy s( port );
 
 	while( s.Loop() ) {};
 

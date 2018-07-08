@@ -15,6 +15,8 @@
 #define INTLISTENER_WAITTIME 25
 #define QUEUESIZE 5
 
+namespace Inspector {
+
 IntListener::IntListener( int port ) {
 	if( !listeningSocket.listenTo( "127.0.0.1", std::to_string( port ), QUEUESIZE ) ) {
 		fprintf( stderr, "\nCould not set up listening socket...\n" );
@@ -132,3 +134,5 @@ ssize_t IntListener::sendResponse( std::weak_ptr< Socket > receivingSocket, HTTP
 	}
 	return -1;
 }
+
+};

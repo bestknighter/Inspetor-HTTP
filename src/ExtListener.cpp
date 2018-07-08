@@ -14,6 +14,8 @@
 #define EXTLISTENER_BUFFER_SIZE 1024
 #define EXTLISTENER_WAITTIME 25
 
+namespace Inspector {
+
 ExtListener::ExtListener() {}
 
 ExtListener::~ExtListener() {
@@ -66,8 +68,8 @@ bool ExtListener::receiveResponses() {
 		if( pollRet > 0 && (POLLIN | POLLPRI) & fds[i].revents ) {
 			int valread = 0;
 			std::string message("");
-	    	do {
-	    		char buffer[EXTLISTENER_BUFFER_SIZE] = {0};
+			do {
+				char buffer[EXTLISTENER_BUFFER_SIZE] = {0};
 				valread = read( std::get<0>(createdSockets[i])->getFileDescriptor(), buffer, sizeof( buffer ) );
 				if( 0 == valread ) break;
 				message += std::string( buffer, valread );
@@ -78,9 +80,9 @@ bool ExtListener::receiveResponses() {
 					fprintf( stderr, "\nError when polling external socket %ld.", i );
 					pollError();
 					retValue = false;
-	    		}
-	    		errno = aux;
-	    	} while( pollRet > 0 && (POLLIN | POLLPRI) & fds[i].revents );
+				}
+				errno = aux;
+			} while( pollRet > 0 && (POLLIN | POLLPRI) & fds[i].revents );
 			if( valread < 0 ) { // Erro ao ler socket
 				fprintf( stderr, "\nCould not read data." );
 				readError();
@@ -91,11 +93,11 @@ bool ExtListener::receiveResponses() {
 			} else { // Registra mensagem recebida
 				responsesReceived.push_back( std::make_tuple( std::get<1>(createdSockets[i]), HTTP::Header(message) ) );
 			}
-	    } else if( pollRet < 0 ) {
+		} else if( pollRet < 0 ) {
 			fprintf( stderr, "\nError when polling external socket %ld.", i );
 			pollError();
 			retValue = false;
-	    }
+		}
 	}
 
 	// Desaloca lista de pollfds
@@ -147,3 +149,5 @@ void ExtListener::trimSockets() { // Exclui pares cujo o socket interno foi excl
 		if( s_w_ptr.expired() ) createdSockets.erase( createdSockets.begin() + i );
 	}
 }
+
+};

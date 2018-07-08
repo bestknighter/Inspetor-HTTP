@@ -10,6 +10,8 @@
 #include "Socket.h"
 #include "Header.h"
 
+namespace Inspector {
+
 class ExtListener {
 public:
 	typedef std::tuple< std::weak_ptr< Socket >, HTTP::Header > Response; // Socket que deve receber; O que deve receber
@@ -28,6 +30,8 @@ private:
 	void trimSockets();
 
 	std::vector< SocketPair > createdSockets;
+};
+
 };
 
 #endif // EXTLISTENER_H

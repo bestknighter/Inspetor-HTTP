@@ -6,6 +6,8 @@
 
 #include "Header.h"
 
+namespace Inspector {
+
 ServidorProxy::ServidorProxy( int port ) : continueRunning(true)
 										 , requestsReceived(il.requestsReceived)
 										 , responsesReceived(el.responsesReceived)
@@ -65,3 +67,5 @@ bool ServidorProxy::Loop() {
 
 	return continueRunning;
 }
+
+};

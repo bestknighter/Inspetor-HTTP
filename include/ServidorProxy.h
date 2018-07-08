@@ -7,6 +7,8 @@
 #include "IntListener.h"
 #include "Header.h"
 
+namespace Inspector {
+
 class ServidorProxy {
 public:
 	ServidorProxy( int port );
@@ -21,6 +23,8 @@ public:
 private:
 	IntListener il;
 	ExtListener el;
+};
+
 };
 
 #endif // SERVIDORPROXY_H
