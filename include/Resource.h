@@ -17,6 +17,7 @@ public:
 
 	std::vector< unsigned long int > references;
 private:
+	std::string host;
 	std::string name;
 	std::string localName;
 	std::string data;

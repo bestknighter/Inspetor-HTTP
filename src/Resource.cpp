@@ -1,11 +1,18 @@
 #include "Resource.h"
 
+#include "Header.h"
+
 namespace Crawler {
 
-Resource::Resource( std::string host, std::string name, std::string HTTPresponse ) : name(name) {
-	// TODO fazer localName = name - host
-	// TODO Obter data a partir do argumento HTTPresponse
+Resource::Resource( std::string host, std::string name, std::string HTTPresponse ) : host(host), name(name) {
+	int begin = name.find( host );
+	localName = name.replace( begin, host.length()+1, "" );
+
+	HTTP::Header header( HTTPresponse );
+	data = header.body;
+
 	// TODO Procurar em data todas as referencias no mesmo host e adicionar em referencedResources
+	// Somente se Content-Type for text/html (verificar se so esse mesmo)
 }
 
 std::string Resource::getName() {
