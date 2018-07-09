@@ -9,7 +9,7 @@
 #include "ErrorPrinter.h"
 
 #define SPIDER_BUFFER 1024
-#define SPIDER_WAITTIME 250
+#define SPIDER_WAITTIME 25
 
 namespace Crawler {
 
@@ -23,12 +23,26 @@ Spider::Spider( std::string host ) : success(false), treeRootName(host) {
 			std::string resource( downloadResource( host, resourcesToDownload.front() ) );
 			if( resource.empty() ) return;
 			tree.emplace_back( host, resourcesToDownload.front(), resource );
-			// TODO Adicionar referencias na fila
+			
+			// Adicionar referencias na fila
+			std::vector< Resource::Reference > refs = tree.back().getReferencedResources();
+			for( unsigned int i = 0; i < refs.size(); i++ ) {
+				resourcesToDownload.push( host + "/" + std::get<2>( refs[i] ) );
+			}
+
 			resourcesToDownload.pop();
 		}
 	}
 
-	// TODO achar e setar as referencias na arvore
+	// Acha e seta as referencias na arvore
+	for( unsigned int j = 0; j < tree.size(); j++ ) {
+		std::vector< Resource::Reference > refs = tree[j].getReferencedResources();
+		for( unsigned int i = 0; i < refs.size(); i++ ) {
+			long long int refNumber = findResource( host + "/" + std::get<2>( refs[i] ) );
+			if( -1 == refNumber ) return;
+			tree[j].references.push_back( refNumber );
+		}
+	}
 	success = true;
 }
 

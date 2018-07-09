@@ -8,7 +8,8 @@ Resource::Resource( std::string host, std::string name, std::string HTTPresponse
 	int begin = name.find( host );
 	localName = name.replace( begin, host.length()+1, "" );
 	if( localName.empty() ) localName = "index";
-	// TODO Provavelmente tem que adicionar ".html" ao final de localName para nao dar problema na hora de usar o dumper
+	// TODO Provavelmente tem que adicionar ".html" ao final de localName (se for do tipo text/html)
+	// para nao dar problema na hora de usar o dumper
 
 	HTTP::Header header( HTTPresponse );
 	data = header.body;
