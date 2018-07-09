@@ -70,8 +70,8 @@ bool Socket::connectTo( std::string name, std::string port, int socketFamily, in
 		if( NULL == addr_p ) {
 			fprintf( stderr, "\nCould not connect to %s:%s...\n", name.c_str(), port.c_str() );
 		}
+		freeaddrinfo(firstAddr);
 	}
-	freeaddrinfo(firstAddr);
 	return valid;
 }
 

@@ -7,6 +7,11 @@ Header::Header( std::string& str ) : firstLine(), body(), host(), port() {
 		unsigned int first = 0;
 		unsigned int last = str.find( "\r\n" );
 		firstLine = str.substr( first, last );
+		if( firstLine.find( "HTTP/1.1" ) == std::string::npos ) { // Nao eh um header http suportado
+			firstLine = "";
+			body = str;
+			return;
+		}
 		
 		first = last + 2;
 		while( ( last = str.find( "\r\n", first ), last ) > first ) {
@@ -58,7 +63,7 @@ std::string Header::to_string( bool includeBody ) {
 	}
 
 	request += "\r\n";
-	request += includeBody ? body : "<body>";
+	request += includeBody ? body : "";
 
 	return request;
 }

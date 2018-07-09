@@ -4,9 +4,10 @@
 
 namespace Crawler {
 
-Resource::Resource( std::string host, std::string name, std::string HTTPresponse ) : host(host), name(name) {
+Resource::Resource( std::string host, std::string name, std::string HTTPresponse ) : host(host) {
 	int begin = name.find( host );
 	localName = name.replace( begin, host.length()+1, "" );
+	this->name = host + "/" + localName;
 	if( localName.empty() ) localName = "index";
 	// TODO Provavelmente tem que adicionar ".html" ao final de localName (se for do tipo text/html)
 	// para nao dar problema na hora de usar o dumper
@@ -53,7 +54,7 @@ void Resource::searchReferences( const char* HTMLproperty ) {
 		unsigned long long int end = data.find( "\"", begin );
 		std::string reference = data.substr(begin, end - begin);
 		unsigned long long int foundHost;
-		if( reference[0] == '/' ) {
+		if( reference.size() > 1 && reference[0] == '/' && reference[1] != '/' ) {
 			foundHost = 1;
 		} else if( (foundHost = reference.find( host ), foundHost != std::string::npos) ) {
 			foundHost += host.length() + 1;

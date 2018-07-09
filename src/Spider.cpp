@@ -9,7 +9,7 @@
 #include "ErrorPrinter.h"
 
 #define SPIDER_BUFFER 1024
-#define SPIDER_WAITTIME 25
+#define SPIDER_WAITTIME 250
 
 namespace Crawler {
 
@@ -27,11 +27,12 @@ Spider::Spider( std::string host ) : success(false), treeRootName(host) {
 			// Adicionar referencias na fila
 			std::vector< Resource::Reference > refs = tree.back().getReferencedResources();
 			for( unsigned int i = 0; i < refs.size(); i++ ) {
-				resourcesToDownload.push( host + "/" + std::get<2>( refs[i] ) );
+				std::string nextResourceName = host + "/" + std::get<2>( refs[i] );
+				if( findResource( nextResourceName ) == -1 ) resourcesToDownload.push( nextResourceName );
 			}
 
-			resourcesToDownload.pop();
 		}
+		resourcesToDownload.pop();
 	}
 
 	// Acha e seta as referencias na arvore
@@ -51,6 +52,9 @@ bool Spider::isValid() {
 }
 
 std::string Spider::downloadResource( std::string host, std::string resourceName ) {
+	int tries = -1;
+RETRY:
+	tries++;
 	std::string request( "GET http://" );
 	request += resourceName;
 	request += " HTTP/1.1\r\nHost: " + host + "\r\nConnection: keep-alive\r\n\r\n";
@@ -68,10 +72,11 @@ std::string Spider::downloadResource( std::string host, std::string resourceName
 	fd.events = POLLIN | POLLPRI;
 	fd.revents = 0;
 	std::string message("");
-	int pollRet = poll( &fd, 1, SPIDER_WAITTIME*40 );
+	int pollRet = poll( &fd, 1, SPIDER_WAITTIME*240 );
 	if( pollRet > 0 && (POLLIN | POLLPRI) & fd.revents ) {
 		int valread = 0;
-		do {
+		do { // TODO criar Header com primeiro pacote recebido e decidir se deve continuar lendo pelo Content-Type
+			 // Somente considerar text/html, text/css e application/javascript
 			char buffer[SPIDER_BUFFER] = {0};
 			valread = read( socket.getFileDescriptor(), buffer, sizeof( buffer ) );
 			if( 0 == valread ) break;
@@ -93,6 +98,7 @@ std::string Spider::downloadResource( std::string host, std::string resourceName
 		} else if( 0 == valread ) { // Fechar socket
 			socket = Socket();
 			if( !socket.connectTo( host, "80" ) ) return std::string("");
+			if( tries < 3 ) goto RETRY;
 		}
 	} else if( pollRet < 0 ) {
 		fprintf( stderr, "\nError when polling spider socket." );
