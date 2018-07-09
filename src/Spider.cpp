@@ -14,7 +14,6 @@
 namespace Crawler {
 
 Spider::Spider( std::string host ) : success(false), treeRootName(host) {
-	Socket socket;
 	if( !socket.connectTo(host, "80") ) return;
 	std::queue< std::string > resourcesToDownload;
 	resourcesToDownload.push( host );

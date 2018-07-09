@@ -7,6 +7,8 @@ namespace Crawler {
 Resource::Resource( std::string host, std::string name, std::string HTTPresponse ) : host(host), name(name) {
 	int begin = name.find( host );
 	localName = name.replace( begin, host.length()+1, "" );
+	if( localName.empty() ) localName = "index";
+	// TODO Provavelmente tem que adicionar ".html" ao final de localName para nao dar problema na hora de usar o dumper
 
 	HTTP::Header header( HTTPresponse );
 	data = header.body;
@@ -15,7 +17,7 @@ Resource::Resource( std::string host, std::string name, std::string HTTPresponse
 	bool shouldLookUp = false;
 	for( unsigned long int i = 0; i < header.fields.size(); i++ ) {
 		if( std::get<0>( header.fields[i] ) == "Content-Type" ) {
-			int pos = std::get<1>( header.fields[i] ).find( "text/html" );
+			unsigned long long int pos = std::get<1>( header.fields[i] ).find( "text/html" );
 			shouldLookUp |= pos != std::string::npos;
 			break;
 		}
@@ -47,7 +49,7 @@ void Resource::searchReferences( const char* HTMLproperty ) {
 	unsigned long long int begin = data.find( property );
 	while( begin != std::string::npos ) {
 		begin += property.length();
-		unsigned long long int end = data.find( "\"", begin ) - 1;
+		unsigned long long int end = data.find( "\"", begin );
 		std::string reference = data.substr(begin, end - begin);
 		unsigned long long int foundHost;
 		if( reference[0] == '/' ) {
@@ -56,7 +58,8 @@ void Resource::searchReferences( const char* HTMLproperty ) {
 			foundHost += host.length() + 1;
 		}
 		if( foundHost != std::string::npos ) { // So adiciona se for local, e adiciona somente o caminho relativo (depois da primeria "/")
-			referencedResources.emplace_back( begin, end, reference.substr( foundHost ) );
+			reference = foundHost <= reference.length() ? reference.substr( foundHost ) : std::string( "" );
+			referencedResources.emplace_back( begin, end, reference );
 		}
 		begin = data.find( property, end + 2 );
 	}

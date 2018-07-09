@@ -15,6 +15,8 @@ public:
 private:
 	std::string downloadResource( std::string host, std::string resourceName );
 	long long int findResource( std::string resourceName );
+	
+	Socket socket;
 	bool success;
 	std::string treeRootName;
 	std::vector< Resource > tree;
