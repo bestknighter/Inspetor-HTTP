@@ -16,8 +16,10 @@ public:
 	std::string getLocalName();
 	std::vector< Reference > getReferencedResources();
 	void setReferences( std::vector< long long int > refs );
+	std::vector< unsigned long int > getReferences();
 	bool save( std::string rootPath );
 	bool isValid();
+	void printInTree( unsigned int level, bool last );
 
 private:
 	void searchReferences( const char* HTMLproperty );
@@ -33,3 +35,4 @@ private:
 };
 
 #endif // RESOURCE_H
+

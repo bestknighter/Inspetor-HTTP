@@ -49,12 +49,37 @@ void Resource::setReferences( std::vector< long long int > refs ) {
 	}
 }
 
+std::vector< unsigned long int > Resource::getReferences() {
+	return references;
+}
+
 bool Resource::save( std::string rootPath ) {
 	// TODO salvar data no caminho rootPath/name corrigindo as referencias para deles rootPath/name
 }
 
 bool Resource::isValid() {
 	return valid;
+}
+
+/*
+root
+ ├─ 1st-lvl
+ │   ├─ 2nd-level
+ │   ├─ 2nd-level
+ │   │   └─ 3rd-level
+ │   └─ 2nd-level
+ ├─ 1st-level
+ └─ 1st-level
+*/
+void Resource::printInTree( unsigned int level, bool last ) {
+	unsigned int i = 0;
+	for( ; i < level-1; i++ ) {
+		printf( " %c  ", 179 ); // " │  "
+	}
+	if( i < level ) {
+		printf( " %c%c ", last?192:195, 196 ); // last ? " └─ " : " ├─ "
+	}
+	printf( "%s", localName.c_str() );
 }
 
 void Resource::searchReferences( const char* HTMLproperty ) {

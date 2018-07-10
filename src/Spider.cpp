@@ -64,6 +64,34 @@ bool Spider::isValid() {
 	return success;
 }
 
+void Spider::printTree() {
+	if( tree.size() == 0 ) return;
+	std::set< unsigned long int > printedValues;
+	printf( "Arvore hipertextual:\n%s (%s)\n", treeRootName.c_str(), tree[0].getLocalName().c_str() );
+	printedValues.emplace( 0 );
+	std::vector< unsigned long int > refs = tree[0].getReferences();
+	for( unsigned long int i = 0; (long long int) i < (long long int) refs.size()-1; i++ ) {
+		recursivePrintTree( refs[i], 1, false, printedValues );
+	}
+	if( refs.size() > 0 ) recursivePrintTree( refs[refs.size()-1], 1, true, printedValues );
+	printf( "\n" );
+}
+
+void Spider::recursivePrintTree( unsigned long int node, int level, bool last, std::set< unsigned long int >& printedValues ) {
+	tree[node].printInTree( level, last );
+	if( printedValues.find( node ) != printedValues.end() ) {
+		printf( " (recurs.)\n" );
+	} else {
+		printf( "\n" );
+		printedValues.emplace( node );
+		std::vector< unsigned long int > refs = tree[node].getReferences();
+		for( unsigned long int i = 0; (long long int) i < (long long int) refs.size()-1; i++ ) {
+			recursivePrintTree( refs[i], level+1, false, printedValues );
+		}
+		if( refs.size() > 0 ) recursivePrintTree( refs[refs.size()-1], level+1, true, printedValues );
+	}
+}
+
 std::string Spider::downloadResource( std::string host, std::string resourceName ) {
 	int tries = -1;
 RETRY:
