@@ -3,7 +3,8 @@
 #include <string>
 #include <stdexcept>
 
-#include "ServidorProxy.h"
+#include "Spider.h"
+//#include "ServidorProxy.h"
 
 #define DEFAULT_PORT 8228
 
@@ -29,9 +30,11 @@ int main( int argc, char* argv[] ) {
 
 	printf( "\nStarting aracne with port# %d\n", port );
 
-	Inspector::ServidorProxy s( port );
-
-	while( s.Loop() ) {};
+	Crawler::Spider s( "www.unb.br" );
+	s.printTree();
+	//Inspector::ServidorProxy s( port );
+	//while( s.Loop() ) {}
 
 	return 0;
 }
+
