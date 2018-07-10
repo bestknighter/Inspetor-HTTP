@@ -9,24 +9,21 @@ Resource::Resource( std::string host, std::string name, std::string HTTPresponse
 	localName = name.replace( begin, host.length()+1, "" );
 	this->name = host + "/" + localName;
 	if( localName.empty() ) localName = "index";
-	// TODO Provavelmente tem que adicionar ".html" ao final de localName (se for do tipo text/html)
-	// para nao dar problema na hora de usar o dumper
 
 	HTTP::Header header( HTTPresponse );
-	data = header.body;
-
-	// Somente se Content-Type for text/html (verificar se so esse mesmo)
-	bool shouldLookUp = false;
-	for( unsigned long int i = 0; i < header.fields.size(); i++ ) {
+	bool isHtml = false;
+	for( unsigned int i = 0; i < header.fields.size(); i++ ) {
 		if( std::get<0>( header.fields[i] ) == "Content-Type" ) {
-			unsigned long long int pos = std::get<1>( header.fields[i] ).find( "text/html" );
-			shouldLookUp |= pos != std::string::npos;
+			isHtml = std::get<1>( header.fields[i] ).find( "text/html" ) != std::string::npos;
 			break;
 		}
 	}
-	if( shouldLookUp ) {
-		searchReferences( "src=\"" );
-		searchReferences( "href=\"" );
+	if( isHtml && header.firstLine == "HTTP/1.1 200 OK" ) {
+		data = header.body;
+		searchReferences( "<a href=\"" );
+		valid = true;
+	} else {
+		valid = false;
 	}
 }
 
@@ -42,8 +39,22 @@ std::vector< Resource::Reference > Resource::getReferencedResources() {
 	return referencedResources;
 }
 
+void Resource::setReferences( std::vector< long long int > refs ) {
+	for( unsigned int i = 0, j = 0; i < refs.size(); i++, j++ ) {
+		if( refs[i] != -1 ) {
+		    references.push_back( refs[i] );
+		} else {
+			referencedResources.erase( referencedResources.begin() + j-- );
+		}
+	}
+}
+
 bool Resource::save( std::string rootPath ) {
 	// TODO salvar data no caminho rootPath/name corrigindo as referencias para deles rootPath/name
+}
+
+bool Resource::isValid() {
+	return valid;
 }
 
 void Resource::searchReferences( const char* HTMLproperty ) {
@@ -61,7 +72,7 @@ void Resource::searchReferences( const char* HTMLproperty ) {
 		}
 		if( foundHost != std::string::npos ) { // So adiciona se for local, e adiciona somente o caminho relativo (depois da primeria "/")
 			reference = foundHost <= reference.length() ? reference.substr( foundHost ) : std::string( "" );
-			referencedResources.emplace_back( begin, end, reference );
+			if( reference.find( ".html" ) != std::string::npos || reference.find( "." ) == std::string::npos ) referencedResources.emplace_back( begin, end, reference );
 		}
 		begin = data.find( property, end + 2 );
 	}

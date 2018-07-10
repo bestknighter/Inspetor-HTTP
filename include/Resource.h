@@ -15,9 +15,10 @@ public:
 	std::string getName();
 	std::string getLocalName();
 	std::vector< Reference > getReferencedResources();
+	void setReferences( std::vector< long long int > refs );
 	bool save( std::string rootPath );
+	bool isValid();
 
-	std::vector< unsigned long int > references;
 private:
 	void searchReferences( const char* HTMLproperty );
 	std::string host;
@@ -25,6 +26,8 @@ private:
 	std::string localName;
 	std::string data;
 	std::vector< Reference > referencedResources;
+	std::vector< unsigned long int > references;
+	bool valid;
 };
 
 };

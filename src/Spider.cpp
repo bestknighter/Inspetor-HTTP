@@ -1,12 +1,14 @@
 #include "Spider.h"
 
 #include <queue>
+#include <cstdio>
 
 #include <sys/socket.h>
 #include <unistd.h>
 #include <poll.h>
 
 #include "ErrorPrinter.h"
+#include "Resource.h"
 
 #define SPIDER_BUFFER 1024
 #define SPIDER_WAITTIME 250
@@ -17,12 +19,22 @@ Spider::Spider( std::string host ) : success(false), treeRootName(host) {
 	if( !socket.connectTo(host, "80") ) return;
 	std::queue< std::string > resourcesToDownload;
 	resourcesToDownload.push( host );
+	short count = 0;
+
+	printf( "Going to %s and computing its tree", host.c_str() );
+	fflush( stdout );
 
 	while( !resourcesToDownload.empty() ) {
+		count = (count+1) % 10;
+		if( 0 == count ) {
+			printf( "." );
+			fflush( stdout );
+		}
 		if( findResource( resourcesToDownload.front() ) == -1 ) {
-			std::string resource( downloadResource( host, resourcesToDownload.front() ) );
-			if( resource.empty() ) return;
-			tree.emplace_back( host, resourcesToDownload.front(), resource );
+			std::string data( downloadResource( host, resourcesToDownload.front() ) );
+			if( data.empty() ) return;
+			Resource r( host, resourcesToDownload.front(), data );
+			if( r.isValid() ) tree.push_back( r );
 			
 			// Adicionar referencias na fila
 			std::vector< Resource::Reference > refs = tree.back().getReferencedResources();
@@ -38,12 +50,13 @@ Spider::Spider( std::string host ) : success(false), treeRootName(host) {
 	// Acha e seta as referencias na arvore
 	for( unsigned int j = 0; j < tree.size(); j++ ) {
 		std::vector< Resource::Reference > refs = tree[j].getReferencedResources();
+		std::vector< long long int > foundRefs;
 		for( unsigned int i = 0; i < refs.size(); i++ ) {
-			long long int refNumber = findResource( host + "/" + std::get<2>( refs[i] ) );
-			if( -1 == refNumber ) return;
-			tree[j].references.push_back( refNumber );
+			foundRefs.push_back( findResource( host + "/" + std::get<2>( refs[i] ) ) );
 		}
+		tree[j].setReferences( foundRefs );
 	}
+	printf( "\n" );
 	success = true;
 }
 
