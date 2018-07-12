@@ -9,15 +9,15 @@ O executável será chamado de aracne e usará as bibliotecas POSIX C.
 
 ## Submódulos
 
-### Interceptor
+### Inspector
 
 Permite interceptar e editar requests HTTP dos navegador antes de permitir que sigam para seu destino final.
 
-### Spider
+### Crawler
 
 O spider cria recursivamente uma árvore hipertextual das URLs adjacentes à uma URL fornecida.
 URLs fora do domínio raiz não devem ser perseguidas.
 
-### Client
+### Dumper
 
 Comportamento similar ao wget porém somente para HTTP. Deve corrigir as referências para que o site possa ser usado localmente.
